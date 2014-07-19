@@ -6,8 +6,7 @@ var Block = function(game, x, y, frame) {
   this.anchor.setTo(0.5, 0.5);
 
   // enable gravity
-  this.game.physics.arcade.enableBody(this);
-  this.body.allowGravity = true;
+  this.game.physics.p2.enableBody(this);
 
 };
 

@@ -8,7 +8,7 @@ Menu.prototype = {
   },
   create: function() {
     var style = { font: '65px Arial', fill: 'red', align: 'center'};
-    this.sprite = this.game.add.sprite(this.game.world.centerX, 200, 'yeoman');
+    this.sprite = this.game.add.sprite(this.game.world.centerX, 200, 'baby-tank');
     this.sprite.anchor.setTo(0.5, 0.5);
 
     this.titleText = this.game.add.text(this.game.world.centerX, 300, 'BABY TANKS', style);

@@ -8,19 +8,19 @@ function Play() {}
 Play.prototype = {
   create: function() {
     var that = this;
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.game.physics.arcade.gravity.y = 1200;
+    this.game.physics.startSystem(Phaser.Physics.P2JS);
+    this.game.physics.p2.gravity.y = 1200;
 
     // Create/add the tank
     this.tank = new Tank(this.game, this.game.width/2, this.game.height/2);
     this.game.add.existing(this.tank);
 
     // Create/add the ground
-    this.ground = new Ground(this.game, 0, 490, 1000, 10);
+    this.ground = new Ground(this.game, 0, 490, 2000, 10);
     this.game.add.existing(this.ground);
     
     // Create/add a block
-    this.block = new Block(this.game, 0, 300);
+    this.block = new Block(this.game, 600, 300);
     this.game.add.existing(this.block);
     
     // Firing logic
@@ -36,8 +36,8 @@ Play.prototype = {
   },
   update: function() {
     // enable collisions with the ground
-    this.game.physics.arcade.collide(this.tank, this.ground, null, null, this);
-    this.game.physics.arcade.collide(this.block, this.ground, null, null, this);
+    // this.game.physics.arcade.collide(this.tank, this.ground, null, null, this);
+    // this.game.physics.arcade.collide(this.block, this.ground, null, null, this);
   },
   click: function() {
     this.game.state.start('gameover');

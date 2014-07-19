@@ -12,7 +12,7 @@ var Bullet = function(game, x, y, frame) {
   // this.animations.play('flap', 12, true);
 
   // enable gravity
-  this.game.physics.arcade.enableBody(this);
+  this.game.physics.p2.enableBody(this);
   this.body.allowGravity = true;
   
 
