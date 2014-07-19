@@ -1,13 +1,19 @@
 'use strict';
 
-var Ground = function(game, x, y, frame) {
-  Phaser.Sprite.call(this, game, x, y, 'ground', frame);
-
-  // initialize your prefab here
+var Ground = function(game, x, y, width, height) {
+  Phaser.TileSprite.call(this, game, x, y, width, height, 'ground');
   
+  // enable physics on the ground sprite
+  // this is needed for collision detection
+  this.game.physics.arcade.enableBody(this);
+
+  // we don't want the ground's body
+  // to be affected by gravity or external forces
+  this.body.allowGravity = false;
+  this.body.immovable = true;
 };
 
-Ground.prototype = Object.create(Phaser.Sprite.prototype);
+Ground.prototype = Object.create(Phaser.TileSprite.prototype);
 Ground.prototype.constructor = Ground;
 
 Ground.prototype.update = function() {

@@ -1,5 +1,5 @@
-
 'use strict';
+
 function Preload() {
   this.asset = null;
   this.ready = false;
@@ -14,7 +14,7 @@ Preload.prototype = {
     this.load.setPreloadSprite(this.asset);
     this.load.image('yeoman', 'assets/baby-tank.jpg');
     this.load.spritesheet('tank', 'assets/tank_sheet.png', 100, 80, 1);
-
+    this.load.image('ground', 'assets/grass.png');
   },
   create: function() {
     this.asset.cropEnabled = false;
