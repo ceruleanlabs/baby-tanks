@@ -36,6 +36,7 @@ var Tank = function(game, x, y, frame) {
   this.addChild(this.cannon);
   this.cannonAngleMax = 98;
   this.cannonAngleMin = 0;
+  this.tankFireSound = this.game.add.audio('tankPewPew');
 };
 
 Tank.prototype = Object.create(Phaser.Sprite.prototype);
@@ -81,6 +82,7 @@ Tank.prototype.fire = function() {
   var bulletVelocity = this.getAngleFromCursor();
   bullet.fire(bulletVelocity.x, bulletVelocity.y);
   this.getAngleFromCursor();
+  this.tankFireSound.play();
 };
 
 Tank.prototype.getAngleFromCursor = function() {

@@ -21,6 +21,7 @@ Preload.prototype = {
     this.load.image('cannon', 'assets/cannon.png');
 
     this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
+    this.load.audio('tankPewPew', 'assets/tank_pewpew.wav');
   },
   create: function() {
     this.asset.cropEnabled = false;
