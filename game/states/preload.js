@@ -20,6 +20,7 @@ Preload.prototype = {
     this.load.image('crosshair', 'assets/crosshair.png');
     this.load.image('cannon', 'assets/cannon.png');
 
+    this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
   },
   create: function() {
     this.asset.cropEnabled = false;
