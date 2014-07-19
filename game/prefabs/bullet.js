@@ -22,6 +22,8 @@ Bullet.prototype = Object.create(Phaser.Sprite.prototype);
 Bullet.prototype.constructor = Bullet;
 
 Bullet.prototype.update = function() {
+  this.angle = Phaser.Math.radToDeg(Math.atan(this.body.velocity.y/this.body.velocity.x));
+  
   if (!this.inWorld)
     this.destroy();
 };

@@ -2,6 +2,7 @@
 
 var Tank = require('../prefabs/tank');
 var Ground = require('../prefabs/ground');
+var Block = require('../prefabs/block');
 var Bullet = require('../prefabs/bullet');
 
 function Play() {}
@@ -11,13 +12,17 @@ Play.prototype = {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.arcade.gravity.y = 1200;
 
-    // Create the tank
+    // Create/add the tank
     this.tank = new Tank(this.game, this.game.width/2, this.game.height/2);
     this.game.add.existing(this.tank);
 
-    // create and add a new Ground object
+    // Create/add the ground
     this.ground = new Ground(this.game, 0, 490, 1000, 10);
     this.game.add.existing(this.ground);
+    
+    // Create/add a block
+    this.block = new Block(this.game, 0, 300);
+    this.game.add.existing(this.block);
     
     // Firing logic
     this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
@@ -36,8 +41,9 @@ Play.prototype = {
     this.game.world.setBounds(0, 0, 5000, 500);
   },
   update: function() {
-    // enable collisions between the tank and the ground
+    // enable collisions with the ground
     this.game.physics.arcade.collide(this.tank, this.ground, null, null, this);
+    this.game.physics.arcade.collide(this.block, this.ground, null, null, this);
   },
   clickListener: function() {
     this.game.state.start('gameover');
