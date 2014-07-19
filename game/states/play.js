@@ -14,6 +14,7 @@ Play.prototype = {
     // Create/add the tank
     this.tank = new Tank(this.game, this.game.width/2, this.game.height/2);
     this.game.add.existing(this.tank);
+    this.tank.cannon.z = -500;
 
     // Create/add the ground
     this.ground = new Ground(this.game, 0, 490, 2000, 10);

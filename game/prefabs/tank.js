@@ -29,6 +29,13 @@ var Tank = function(game, x, y, frame) {
   // Create the crosshair
   this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
   this.game.add.existing(this.crosshair);
+
+  // cannon
+  this.cannon = new Phaser.Sprite(this.game, 25, -20, 'cannon');
+  this.cannon.anchor.setTo(0.5, 1);
+  this.addChild(this.cannon);
+  this.cannonAngleMax = 98;
+  this.cannonAngleMin = 0;
 };
 
 Tank.prototype = Object.create(Phaser.Sprite.prototype);
@@ -51,6 +58,13 @@ Tank.prototype.update = function() {
       this.body.velocity.x = Phaser.Math.clamp(this.body.velocity.x, -this.maxSpeed, 0);
     }
   }
+
+  // Update the cannon
+  var cannonAngle = this.getAngleFromCursor();
+  this.cannon.angle = Phaser.Math.radToDeg(Math.atan(cannonAngle.y/cannonAngle.x)) + 90;
+  this.cannon.angle = this.cannon.angle % 360;
+  if(this.cannon.angle < 0) this.cannon.angle += 360;
+  this.cannon.angle = Phaser.Math.clamp(this.cannon.angle, this.cannonAngleMin, this.cannonAngleMax);
 };
 
 Tank.prototype.move = function(moveKey) {
