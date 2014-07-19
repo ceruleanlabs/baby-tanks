@@ -65,7 +65,14 @@ Tank.prototype.move = function(moveKey) {
 Tank.prototype.fire = function() {
   var bullet = new Bullet(this.game, this.body.position.x, this.body.position.y);
   this.game.add.existing(bullet);
-  bullet.fire(800, -500);
+  var bulletVelocity = this.getAngleFromCursor();
+  bullet.fire(bulletVelocity.x, bulletVelocity.y);
+  this.getAngleFromCursor();
 };
+
+Tank.prototype.getAngleFromCursor = function() {
+  var posDiff = new Phaser.Point(this.crosshair.x - this.x, this.crosshair.y - this.y);
+  return Phaser.Point.normalize(posDiff).setMagnitude(1000);
+}
 
 module.exports = Tank;
