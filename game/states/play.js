@@ -28,6 +28,12 @@ Play.prototype = {
       that.game.add.existing(that.bullet);
       that.bullet.fire(500, -500);
     }, this.bullet);
+
+    // Camera
+    this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
+
+    // World bounds
+    this.game.world.setBounds(0, 0, 5000, 500);
   },
   update: function() {
     // enable collisions between the tank and the ground
