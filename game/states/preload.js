@@ -17,6 +17,7 @@ Preload.prototype = {
     this.load.image('ground', 'assets/grass.png');
     this.load.image('block', 'assets/grassy.png');
     this.load.spritesheet('bullet', 'assets/tank_sheet.png', 100, 80, 1);
+    this.load.image('crosshair', 'assets/crosshair.png');
 
   },
   create: function() {

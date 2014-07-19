@@ -3,7 +3,6 @@
 var Tank = require('../prefabs/tank');
 var Ground = require('../prefabs/ground');
 var Block = require('../prefabs/block');
-var Bullet = require('../prefabs/bullet');
 
 function Play() {}
 Play.prototype = {
@@ -27,12 +26,7 @@ Play.prototype = {
     // Firing logic
     this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
     var fireKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    
-    fireKey.onDown.add(function() {
-      that.bullet = new Bullet(that.game, that.game.width/4, that.game.height/4);
-      that.game.add.existing(that.bullet);
-      that.bullet.fire(500, -500);
-    }, this.bullet);
+    fireKey.onDown.add(this.tank.fire, this.tank);
 
     // Camera
     this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
@@ -45,7 +39,7 @@ Play.prototype = {
     this.game.physics.arcade.collide(this.tank, this.ground, null, null, this);
     this.game.physics.arcade.collide(this.block, this.ground, null, null, this);
   },
-  clickListener: function() {
+  click: function() {
     this.game.state.start('gameover');
   }
 };

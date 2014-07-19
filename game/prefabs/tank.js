@@ -1,5 +1,8 @@
 'use strict';
 
+var Bullet = require('../prefabs/bullet');
+var Crosshair = require('../prefabs/crosshair');
+
 var Tank = function(game, x, y, frame) {
   // The super call to Phaser.Sprite
   Phaser.Sprite.call(this, game, x, y, 'tank', frame);
@@ -23,6 +26,10 @@ var Tank = function(game, x, y, frame) {
   this.maxSpeed = 300;
   this.decelerationSpeed = 500;
   this.accelerationSpeed = 300;
+
+  // Create the crosshair
+  this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
+  this.game.add.existing(this.crosshair);
 };
 
 Tank.prototype = Object.create(Phaser.Sprite.prototype);
@@ -53,6 +60,12 @@ Tank.prototype.move = function(moveKey) {
   } else if(moveKey == Phaser.Keyboard.LEFT && this.body.velocity.x > -this.maxSpeed) {
     this.body.velocity.x -= this.accelerationSpeed * (this.game.time.elapsed / 1000);
   }
+};
+
+Tank.prototype.fire = function() {
+  var bullet = new Bullet(this.game, this.body.position.x, this.body.position.y);
+  this.game.add.existing(bullet);
+  bullet.fire(800, -500);
 };
 
 module.exports = Tank;
