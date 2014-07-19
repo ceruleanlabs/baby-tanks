@@ -15,6 +15,8 @@ Preload.prototype = {
     this.load.image('yeoman', 'assets/baby-tank.jpg');
     this.load.spritesheet('tank', 'assets/tank_sheet.png', 100, 80, 1);
     this.load.image('ground', 'assets/grass.png');
+    this.load.spritesheet('bullet', 'assets/tank_sheet.png', 100, 80, 1);
+
   },
   create: function() {
     this.asset.cropEnabled = false;
