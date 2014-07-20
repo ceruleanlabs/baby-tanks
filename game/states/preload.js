@@ -22,7 +22,7 @@ Preload.prototype = {
     this.load.image('bullet', 'assets/bullet.png');
 
     this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
-    this.load.audio('tankPewPew', 'assets/tank_pewpew.wav');
+    this.load.audio('tankPewPew', 'assets/tank_pewpew.mp3');
   },
   create: function() {
     this.asset.cropEnabled = false;
