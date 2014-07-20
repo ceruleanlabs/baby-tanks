@@ -16,10 +16,6 @@ Play.prototype = {
     this.background = this.game.add.tileSprite(0, 0, 5000, 500, 'background');
     this.flowers = this.game.add.sprite(0, this.game.height - 100, 'flowers');
 
-    // music
-    this.music = this.game.add.audio('backgroundMusic', 1, true);
-    this.music.play('', 0, 1, true);
-
     // Create/add the tank
     this.tank = new Tank(this.game, this.game.width/8, this.game.height/2);
     this.game.add.existing(this.tank);

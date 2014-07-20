@@ -17,6 +17,10 @@ Menu.prototype = {
 
     this.sprite.angle = -20;
     this.game.add.tween(this.sprite).to({angle: 20}, 500, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
+
+    // music
+    this.music = this.game.add.audio('backgroundMusic', 1, true);
+    this.music.play('', 0, 1, true);
   },
   update: function() {
     if(this.game.input.activePointer.justPressed()) {
