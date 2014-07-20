@@ -2,7 +2,7 @@
 
 var Tank = require('../prefabs/tank');
 var Ground = require('../prefabs/ground');
-var Block = require('../prefabs/block');
+var Enemy = require('../prefabs/enemy');
 
 function Play() {}
 Play.prototype = {
@@ -16,7 +16,7 @@ Play.prototype = {
     this.flowers = this.game.add.sprite(0, this.game.height - 100, 'flowers');
 
     // Create/add the tank
-    this.tank = new Tank(this.game, this.game.width/2, this.game.height/2);
+    this.tank = new Tank(this.game, this.game.width/8, this.game.height/2);
     this.game.add.existing(this.tank);
     this.tank.cannon.z = -500;
     var tankCG = this.game.physics.p2.createCollisionGroup();
@@ -30,15 +30,17 @@ Play.prototype = {
     var groundCG = this.game.physics.p2.createCollisionGroup();
     this.ground.body.setCollisionGroup(groundCG);
     
-    // Create/add a block
-    this.block = new Block(this.game, 600, 300);
-    this.game.add.existing(this.block);
-    var blockCG = this.game.physics.p2.createCollisionGroup();
-    this.block.body.setCollisionGroup(blockCG);
+    // Create/add a enemy
+    this.enemy = new Enemy(this.game, 600, 300);
+    this.game.add.existing(this.enemy);
+    var enemyCG = this.game.physics.p2.createCollisionGroup();
+    this.tank.enemyCG = enemyCG;
+    this.enemy.body.setCollisionGroup(enemyCG);
     
     // Setup Collisions
-    this.tank.body.collides(groundCG);
-    this.ground.body.collides(tankCG);
+    this.tank.body.collides( [groundCG, enemyCG] );
+    this.enemy.body.collides( [groundCG, tankCG, this.tank.bulletCG] );
+    this.ground.body.collides( [enemyCG, tankCG] );
     
     // Firing logic
     this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);

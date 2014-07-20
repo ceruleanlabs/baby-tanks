@@ -2,9 +2,11 @@
 
 var Bullet = require('../prefabs/bullet');
 var Crosshair = require('../prefabs/crosshair');
-var firing = false;
 
 var Tank = function(game, x, y, frame) {
+  this.firing = false;
+  this.bulletCG = game.physics.p2.createCollisionGroup();
+  this.enemyCG;
   // The super call to Phaser.Sprite
   Phaser.Sprite.call(this, game, x, y, 'tank', frame);
   // set the sprite's anchor to the center
@@ -15,7 +17,7 @@ var Tank = function(game, x, y, frame) {
   // this.animations.play('flap', 12, true);
 
   // enable physics
-  this.game.physics.p2.enableBody(this);
+  game.physics.p2.enableBody(this);
 
   //  And some controls to play the game with
   this.moveRight = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
@@ -28,7 +30,7 @@ var Tank = function(game, x, y, frame) {
 
   // Create the crosshair
   this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
-  this.game.add.existing(this.crosshair);
+  game.add.existing(this.crosshair);
 
   // cannon
   this.cannon = new Phaser.Sprite(this.game, 25, -20, 'cannon');
@@ -70,7 +72,7 @@ Tank.prototype.update = function() {
   //this.cannon.angle = Phaser.Math.clamp(this.cannon.angle, this.cannonAngleMin, this.cannonAngleMax);
   
   // Update the crosshair
-  if (firing)
+  if (this.firing)
     this.crosshair.body.angularVelocity += 8 * (this.game.time.elapsed / 1000);
 };
 
@@ -83,7 +85,7 @@ Tank.prototype.move = function(moveKey) {
 };
 
 Tank.prototype.beforeFire = function() {
-  firing = true;
+  this.firing = true;
 }
 
 Tank.prototype.fire = function() {
@@ -91,11 +93,14 @@ Tank.prototype.fire = function() {
   var bulletVelocity = this.getVectorCannon();
   var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width, this.cannon.world.y + bulletVelocity.y * this.cannon.width * -1);
   this.game.add.existing(bullet);
+  bullet.body.mass = 150;
+  bullet.body.setCollisionGroup(this.bulletCG);
+  bullet.body.collides(this.enemyCG, this.hit, this);
   bulletVelocity.setMagnitude(1000);
   bullet.fire(bulletVelocity.x, -bulletVelocity.y);
   this.tankFireSound.play();
   this.crosshair.body.angularVelocity = 2;
-  firing = false;
+  this.firing = false;
 };
 
 Tank.prototype.getVectorFromCursor = function() {
@@ -121,6 +126,18 @@ Tank.prototype.getAngleFromVector = function() {
   else if(vec.x > 0 && vec.y < 0)
     angle = 360 + angle;
   return angle;
+}
+
+Tank.prototype.hit = function(bullet, enemy) {
+  console.log(bullet, enemy)
+   var dieText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Score: 0", {
+        font: "20px Arial",
+        fill: "#ff0044",
+        align: "left"
+    });
+    dieText.fixedToCamera = false;
+    dieText.setText("YOU MURDERED YEOMAN");
+  
 }
 
 module.exports = Tank;
