@@ -48,6 +48,11 @@ var Tank = function(game, x, y, frame) {
   this.minPower = 600;
   this.maxPower = 2000;
   this.powerTime = 3000;
+  
+  // baby
+  this.baby = new Phaser.Sprite(game, -40, -20, 'baby');
+  this.baby.anchor.setTo(0.5, 0.5);
+  this.addChild(this.baby);
 };
 
 Tank.prototype = Object.create(Phaser.Sprite.prototype);
@@ -109,6 +114,11 @@ Tank.prototype.move = function(moveKey) {
     this.body.velocity.x -= this.accelerationSpeed * (this.game.time.elapsed / 1000);
   }
 };
+
+Tank.prototype.jump = function() {
+  if (this.y >= 450)
+    this.body.velocity.y += -400;
+}
 
 Tank.prototype.beforeFire = function() {
   this.firing = true;

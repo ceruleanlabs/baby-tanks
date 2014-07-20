@@ -46,10 +46,13 @@ Play.prototype = {
     this.ground.body.collides( [enemyCG, tankCG] );
     
     // Firing logic
+    this.game.input.onDown.add(this.tank.beforeFire, this.tank);
+    this.game.input.onUp.add(this.tank.fire, this.tank);
+    
+    // Jumping logic
     this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
     var fireKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    fireKey.onDown.add(this.tank.beforeFire, this.tank);
-    fireKey.onUp.add(this.tank.fire, this.tank);
+    fireKey.onDown.add(this.tank.jump, this.tank);
 
     // Camera
     this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
