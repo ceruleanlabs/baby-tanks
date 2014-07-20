@@ -1,5 +1,4 @@
 'use strict';
-var health = 10;
 
 var Enemy = function(game, x, y, frame) {
   // The super call to Phaser.Sprite
@@ -8,6 +7,7 @@ var Enemy = function(game, x, y, frame) {
 
   // enable gravity
   this.game.physics.p2.enableBody(this);
+  this.health = 10;
 
 };
 
@@ -18,12 +18,8 @@ Enemy.prototype.update = function() {
   
 };
 
-Enemy.prototype.getHealth = function() {
-  return health;
-};
-
 Enemy.prototype.decreaseHealth = function(amount, impactVelocity) {
-  health -= amount;
+  this.health -= amount;
   
   // Emitters have a center point and a width/height, which extends from their center point to the left/right and up/down
      var emitter = this.game.add.emitter(this.x, this.y, 400);
@@ -48,7 +44,7 @@ Enemy.prototype.decreaseHealth = function(amount, impactVelocity) {
      emitter.maxParticleScale = 1;
      // emitter.setAll('body.allowGravity', false);
   
-  if (health <= 0)
+  if (this.health <= 0)
   {
     emitter.start(true, 2000, null, 50);
     this.destroy();
