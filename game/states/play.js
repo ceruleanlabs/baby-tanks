@@ -17,6 +17,8 @@ Play.prototype = {
     this.tank.cannon.z = -500;
     var tankCG = this.game.physics.p2.createCollisionGroup();
     this.tank.body.setCollisionGroup(tankCG);
+    var crosshairCG = this.game.physics.p2.createCollisionGroup();
+    this.tank.crosshair.body.setCollisionGroup(crosshairCG);
 
     // Create/add the ground
     this.ground = new Ground(this.game, 0, 490, 2000, 10);

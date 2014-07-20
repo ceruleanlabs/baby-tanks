@@ -62,13 +62,16 @@ Tank.prototype.update = function() {
 
   // Update the cannon
   var angle = this.getAngleFromVector();
-  console.log(angle);
   if(angle < 180)
     angle = Phaser.Math.clamp(angle, 0, this.cannonAngleMax);
   else
     angle = Phaser.Math.clamp(angle, this.cannonAngleMin, 360);
   this.cannon.angle = -angle;
   //this.cannon.angle = Phaser.Math.clamp(this.cannon.angle, this.cannonAngleMin, this.cannonAngleMax);
+  
+  // Update the crosshair
+  if (firing)
+    this.crosshair.body.angularVelocity += 8 * (this.game.time.elapsed / 1000);
 };
 
 Tank.prototype.move = function(moveKey) {
@@ -80,8 +83,7 @@ Tank.prototype.move = function(moveKey) {
 };
 
 Tank.prototype.beforeFire = function() {
-  this.crosshair.body.angularVelocity = 10;
-  this.crosshair.body.angularDamping = 50;
+  firing = true;
 }
 
 Tank.prototype.fire = function() {
@@ -91,6 +93,7 @@ Tank.prototype.fire = function() {
   bullet.fire(bulletVelocity.x, bulletVelocity.y);
   this.tankFireSound.play();
   this.crosshair.body.angularVelocity = 2;
+  firing = false;
 };
 
 Tank.prototype.getVectorFromCursor = function() {
