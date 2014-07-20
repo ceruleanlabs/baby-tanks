@@ -16,7 +16,7 @@ Preload.prototype = {
     this.load.setPreloadSprite(this.asset);
     this.load.image('baby-tank', 'assets/baby-tank.jpg');
     this.load.spritesheet('bigTank', 'assets/bigtank_sheet.png', 100, 80, 2);
-    this.load.spritesheet('babyTank', 'assets/babytank_sheet.png', 100, 80, 2);
+    this.load.spritesheet('babyTank', 'assets/babytank_sheet.png', 100, 64, 2);
     this.load.image('baby', 'assets/baby.png');
     this.load.image('ground', 'assets/grass.png');
     this.load.image('enemy', 'assets/yoman.png');
