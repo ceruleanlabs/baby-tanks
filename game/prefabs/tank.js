@@ -47,9 +47,11 @@ Tank.prototype.constructor = Tank;
 Tank.prototype.update = function() {
   // move the tank
   if (this.moveRight.isDown) {
+    this.scale.x = 1;
     this.move(Phaser.Keyboard.RIGHT);
   }
   else if(this.moveLeft.isDown) {
+    this.scale.x = -1;
     this.move(Phaser.Keyboard.LEFT);
   }
   else {
@@ -64,11 +66,19 @@ Tank.prototype.update = function() {
 
   // Update the cannon
   var angle = this.getAngleFromVector();
-  if(angle < 180)
-    angle = Phaser.Math.clamp(angle, 0, this.cannonAngleMax);
-  else
-    angle = Phaser.Math.clamp(angle, this.cannonAngleMin, 360);
-  this.cannon.angle = -angle;
+  if(this.scale.x > 0) {
+    if(angle < 180)
+      angle = Phaser.Math.clamp(angle, 0, this.cannonAngleMax);
+    else
+      angle = Phaser.Math.clamp(angle, this.cannonAngleMin, 360);
+    this.cannon.angle = -angle;
+  } else {
+    if(angle < 180)
+      angle = Phaser.Math.clamp(angle, 0, this.cannonAngleMax);
+    else
+      angle = Phaser.Math.clamp(angle, this.cannonAngleMin, 360);
+    this.cannon.angle = -angle;
+  }
   //this.cannon.angle = Phaser.Math.clamp(this.cannon.angle, this.cannonAngleMin, this.cannonAngleMax);
   
   // Update the crosshair
@@ -90,7 +100,7 @@ Tank.prototype.beforeFire = function() {
 
 Tank.prototype.fire = function() {
   var bulletVelocity = this.getVectorCannon();
-  var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width, this.cannon.world.y + bulletVelocity.y * this.cannon.width * -1);
+  var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width * this.scale.x, this.cannon.world.y + bulletVelocity.y * this.cannon.width * -1);
   this.game.add.existing(bullet);
   
   bullet.body.setCollisionGroup(this.bulletCG);
@@ -100,14 +110,14 @@ Tank.prototype.fire = function() {
   bullet.body.collides(this.enemyCG, x, this);
   
   bulletVelocity.setMagnitude(1000);
-  bullet.fire(bulletVelocity.x, -bulletVelocity.y);
+  bullet.fire(bulletVelocity.x * this.scale.x, -bulletVelocity.y);
   this.tankFireSound.play();
   this.crosshair.body.angularVelocity = 2;
   this.firing = false;
 };
 
 Tank.prototype.getVectorFromCursor = function() {
-  var x = this.crosshair.world.x - this.world.x;
+  var x = (this.crosshair.world.x - this.world.x) * this.scale.x;
   var y = -(this.crosshair.world.y - this.world.y);
   var posDiff = new Phaser.Point(x, y);
   return Phaser.Point.normalize(posDiff);

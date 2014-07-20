@@ -12,7 +12,7 @@ Play.prototype = {
     this.game.physics.p2.gravity.y = 1200;
 
     // background
-    this.background = this.game.add.sprite(0, 0, 'background');
+    this.background = this.game.add.tileSprite(0, 0, 5000, 500, 'background');
     this.flowers = this.game.add.sprite(0, this.game.height - 100, 'flowers');
 
     // Create/add the tank
@@ -25,7 +25,7 @@ Play.prototype = {
     this.tank.crosshair.body.setCollisionGroup(crosshairCG);
 
     // Create/add the ground
-    this.ground = new Ground(this.game, 0, 495, 2000, 10);
+    this.ground = new Ground(this.game, 0, 495, 5000, 10);
     this.game.add.existing(this.ground);
     var groundCG = this.game.physics.p2.createCollisionGroup();
     this.ground.body.setCollisionGroup(groundCG);
