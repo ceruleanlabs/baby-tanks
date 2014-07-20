@@ -15,7 +15,7 @@ Play.prototype = {
 
     // background
     this.background = this.game.add.tileSprite(0, 0, 5000, 500, 'background');
-    this.flowers = this.game.add.sprite(0, this.game.height - 100, 'flowers');
+    this.flowers = this.game.add.sprite(0, this.game.height - 120, 'flowers');
 
     // Create/add the tank
     this.tank = new Tank(this.game, this.game.width/8, this.game.height/2);
@@ -27,7 +27,7 @@ Play.prototype = {
     this.tank.crosshair.body.setCollisionGroup(crosshairCG);
 
     // Create/add the ground
-    this.ground = new Ground(this.game, 0, 495, 5000, 10);
+    this.ground = new Ground(this.game, 0, 500, 10000, 40);
     this.game.add.existing(this.ground);
     var groundCG = this.game.physics.p2.createCollisionGroup();
     this.ground.body.setCollisionGroup(groundCG);
@@ -61,9 +61,8 @@ Play.prototype = {
     this.game.world.setBounds(0, 0, 5000, 500);
   },
   update: function() {
-  },
-  click: function() {
-    this.game.state.start('gameover');
+    if(this.tank.world.x > 4500)
+        this.game.state.start('gameover');
   }
 };
 
