@@ -17,9 +17,9 @@ Preload.prototype = {
     this.load.spritesheet('tank', 'assets/tank_sheet.png', 100, 80, 2);
     this.load.image('ground', 'assets/grass.png');
     this.load.image('block', 'assets/grassy.png');
-    this.load.spritesheet('bullet', 'assets/tank_sheet.png', 100, 80, 1);
     this.load.image('crosshair', 'assets/crosshair.png');
     this.load.image('cannon', 'assets/cannon.png');
+    this.load.image('bullet', 'assets/bullet.png');
 
     this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
     this.load.audio('tankPewPew', 'assets/tank_pewpew.wav');

@@ -17,8 +17,8 @@ Crosshair.prototype.constructor = Crosshair;
 
 Crosshair.prototype.update = function() {
   
-  this.body.x = this.game.input.mousePointer.x;
-  this.body.y = this.game.input.mousePointer.y;
+  this.body.x = this.game.input.mousePointer.worldX;
+  this.body.y = this.game.input.mousePointer.worldY;
 
   this.angle += this.rotateSpeed * (this.game.time.elapsed / 1000);
 };

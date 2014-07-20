@@ -87,10 +87,11 @@ Tank.prototype.beforeFire = function() {
 }
 
 Tank.prototype.fire = function() {
-  var bullet = new Bullet(this.game, this.body.x, this.body.y);
+  var bulletVelocity = this.getVectorFromCursor();
+  var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width, this.cannon.world.y + bulletVelocity.y * this.cannon.width * -1);
   this.game.add.existing(bullet);
-  var bulletVelocity = this.getAngleFromVector();
-  bullet.fire(bulletVelocity.x, bulletVelocity.y);
+  bulletVelocity.setMagnitude(1000);
+  bullet.fire(bulletVelocity.x, -bulletVelocity.y);
   this.tankFireSound.play();
   this.crosshair.body.angularVelocity = 2;
   firing = false;
