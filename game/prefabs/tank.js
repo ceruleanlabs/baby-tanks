@@ -87,7 +87,8 @@ Tank.prototype.beforeFire = function() {
 }
 
 Tank.prototype.fire = function() {
-  var bulletVelocity = this.getVectorFromCursor();
+  console.log(this.cannon.angle * -1, this.getVectorCannon().x, this.getVectorCannon().y);
+  var bulletVelocity = this.getVectorCannon();
   var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width, this.cannon.world.y + bulletVelocity.y * this.cannon.width * -1);
   this.game.add.existing(bullet);
   bulletVelocity.setMagnitude(1000);
@@ -102,6 +103,12 @@ Tank.prototype.getVectorFromCursor = function() {
   var y = -(this.crosshair.world.y - this.world.y);
   var posDiff = new Phaser.Point(x, y);
   return Phaser.Point.normalize(posDiff);
+}
+
+Tank.prototype.getVectorCannon = function() {
+  var x = Math.cos(Phaser.Math.degToRad(this.cannon.angle)) * this.cannon.width;
+  var y = Math.sin(Phaser.Math.degToRad(this.cannon.angle)) * this.cannon.width * -1;
+  return Phaser.Point.normalize(new Phaser.Point(x, y));
 }
 
 Tank.prototype.getAngleFromVector = function() {
