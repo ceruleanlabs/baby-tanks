@@ -219,9 +219,8 @@ var Tank = function(game, x, y, frame) {
   this.tankEngineSound = this.game.add.audio('tankEngine');
   this.tankEngineSound.play('', 0, 1, true);
 
-  // add and play animations
-  // this.animations.add('flap');
-  // this.animations.play('flap', 12, true);
+  // add animations
+  this.animations.add('moveWheels');
 
   // enable physics
   game.physics.p2.enableBody(this);
@@ -281,11 +280,13 @@ Tank.prototype.update = function() {
     }
   }
 
-  // make engine louder when tank is moving
+  // make engine louder and animate when tank is moving
   if (this.body.velocity.x > 0.5 || this.body.velocity.x < -0.5) {
     this.tankEngineSound.volume = 0.5;
+      this.animations.play('moveWheels', 10, true);
   } else {
     this.tankEngineSound.volume = 0.3;
+    this.animations.stop('moveWheels');
   }
 
   // Update the cannon
