@@ -32,10 +32,10 @@ var Tank = function(game, x, y, frame) {
 
   // cannon
   this.cannon = new Phaser.Sprite(this.game, 25, -20, 'cannon');
-  this.cannon.anchor.setTo(0.5, 1);
+  this.cannon.anchor.setTo(0, 0.5);
   this.addChild(this.cannon);
   this.cannonAngleMax = 98;
-  this.cannonAngleMin = 0;
+  this.cannonAngleMin = 350;
   this.tankFireSound = this.game.add.audio('tankPewPew');
 };
 
@@ -61,11 +61,14 @@ Tank.prototype.update = function() {
   }
 
   // Update the cannon
-  var cannonAngle = this.getAngleFromCursor();
-  this.cannon.angle = Phaser.Math.radToDeg(Math.atan(cannonAngle.y/cannonAngle.x)) + 90;
-  this.cannon.angle = this.cannon.angle % 360;
-  if(this.cannon.angle < 0) this.cannon.angle += 360;
-  this.cannon.angle = Phaser.Math.clamp(this.cannon.angle, this.cannonAngleMin, this.cannonAngleMax);
+  var angle = this.getAngleFromVector();
+  console.log(angle);
+  if(angle < 180)
+    angle = Phaser.Math.clamp(angle, 0, this.cannonAngleMax);
+  else
+    angle = Phaser.Math.clamp(angle, this.cannonAngleMin, 360);
+  this.cannon.angle = -angle;
+  //this.cannon.angle = Phaser.Math.clamp(this.cannon.angle, this.cannonAngleMin, this.cannonAngleMax);
 };
 
 Tank.prototype.move = function(moveKey) {
@@ -85,9 +88,23 @@ Tank.prototype.fire = function() {
   this.tankFireSound.play();
 };
 
-Tank.prototype.getAngleFromCursor = function() {
-  var posDiff = new Phaser.Point(this.crosshair.x - this.x, this.crosshair.y - this.y);
-  return Phaser.Point.normalize(posDiff).setMagnitude(1000);
+Tank.prototype.getVectorFromCursor = function() {
+  var x = this.crosshair.world.x - this.world.x;
+  var y = -(this.crosshair.world.y - this.world.y);
+  var posDiff = new Phaser.Point(x, y);
+  return Phaser.Point.normalize(posDiff);
+}
+
+Tank.prototype.getAngleFromVector = function() {
+  var vec = this.getVectorFromCursor();
+  var angle = Phaser.Math.radToDeg(Math.atan(vec.y/vec.x));
+  if(vec.x < 0 && vec.y > 0)
+    angle = 180 + angle;
+  else if(vec.x < 0 && vec.y < 0)
+    angle = angle + 180;
+  else if(vec.x > 0 && vec.y < 0)
+    angle = 360 + angle;
+  return angle;
 }
 
 module.exports = Tank;
