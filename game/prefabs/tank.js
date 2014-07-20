@@ -12,6 +12,10 @@ var Tank = function(game, x, y, frame) {
   // set the sprite's anchor to the center
   this.anchor.setTo(0.5, 0.5);
 
+  // tank engine sound
+  this.tankEngineSound = this.game.add.audio('tankEngine');
+  this.tankEngineSound.play('', 0, 1, true);
+
   // add and play animations
   // this.animations.add('flap');
   // this.animations.play('flap', 12, true);
@@ -64,6 +68,13 @@ Tank.prototype.update = function() {
       this.body.velocity.x += this.decelerationSpeed * (this.game.time.elapsed / 1000);
       this.body.velocity.x = Phaser.Math.clamp(this.body.velocity.x, -this.maxSpeed, 0);
     }
+  }
+
+  // make engine louder when tank is moving
+  if (this.body.velocity.x > 0.5 || this.body.velocity.x < -0.5) {
+    this.tankEngineSound.volume = 0.5;
+  } else {
+    this.tankEngineSound.volume = 0.3;
   }
 
   // Update the cannon
