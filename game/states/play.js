@@ -1,6 +1,7 @@
 'use strict';
 
 var Tank = require('../prefabs/tank');
+var Baby = require('../prefabs/baby');
 var Ground = require('../prefabs/ground');
 var Enemy = require('../prefabs/enemy');
 
