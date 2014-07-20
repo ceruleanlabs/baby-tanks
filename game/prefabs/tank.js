@@ -21,7 +21,9 @@ var Tank = function(game, x, y, frame) {
 
   //  And some controls to play the game with
   this.moveRight = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+  this.moveRightD = game.input.keyboard.addKey(Phaser.Keyboard.D);
   this.moveLeft = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+  this.moveLeftA = game.input.keyboard.addKey(Phaser.Keyboard.A);
 
   // MAX SPEED
   this.maxSpeed = 300;
@@ -46,11 +48,11 @@ Tank.prototype.constructor = Tank;
 
 Tank.prototype.update = function() {
   // move the tank
-  if (this.moveRight.isDown) {
+  if (this.moveRight.isDown || this.moveRightD.isDown) {
     this.scale.x = 1;
     this.move(Phaser.Keyboard.RIGHT);
   }
-  else if(this.moveLeft.isDown) {
+  else if(this.moveLeft.isDown || this.moveLeftA.isDown) {
     this.scale.x = -1;
     this.move(Phaser.Keyboard.LEFT);
   }
