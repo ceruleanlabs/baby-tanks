@@ -8,7 +8,7 @@ var Tank = function(game, x, y, frame) {
   this.bulletCG = game.physics.p2.createCollisionGroup();
   this.enemyCG;
   // The super call to Phaser.Sprite
-  Phaser.Sprite.call(this, game, x, y, 'tank', 1);
+  Phaser.Sprite.call(this, game, x, y, 'babyTank', 1);
   // set the sprite's anchor to the center
   this.anchor.setTo(0.5, 0.5);
 
