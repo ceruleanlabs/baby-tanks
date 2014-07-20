@@ -27,6 +27,7 @@ Preload.prototype = {
     this.load.audio('backgroundMusic', 'assets/music.wav');
     this.load.audio('tankPewPew', 'assets/tank_pewpew.mp3');
     this.load.audio('tankEngine', 'assets/tank_enginesound.mp3');
+    this.load.audio('bulletSplode', 'assets/bullet_splosion.mp3');
   },
   create: function() {
     this.asset.cropEnabled = false;
