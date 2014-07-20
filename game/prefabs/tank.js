@@ -116,7 +116,8 @@ Tank.prototype.move = function(moveKey) {
 };
 
 Tank.prototype.jump = function() {
-  if (this.y >= 450)
+  console.log(this.y);
+  if (this.y >= 445)
     this.body.velocity.y += -400;
 }
 
