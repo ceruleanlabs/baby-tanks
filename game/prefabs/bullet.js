@@ -23,6 +23,9 @@ Bullet.prototype.constructor = Bullet;
 
 Bullet.prototype.update = function() {
   this.angle = Phaser.Math.radToDeg(Math.atan(this.body.velocity.y/this.body.velocity.x));
+  
+  if (!this.inWorld && this.world.y > this.game.height)
+    this.destroy();
 };
 
 Bullet.prototype.fire = function(x, y) {
