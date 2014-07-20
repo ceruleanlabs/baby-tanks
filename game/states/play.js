@@ -11,6 +11,9 @@ Play.prototype = {
     this.game.physics.startSystem(Phaser.Physics.P2JS);
     this.game.physics.p2.gravity.y = 1200;
 
+    // background
+    this.background = this.game.add.sprite(0, 0, 'background');
+
     // Create/add the tank
     this.tank = new Tank(this.game, this.game.width/2, this.game.height/2);
     this.game.add.existing(this.tank);
