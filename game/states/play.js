@@ -11,6 +11,7 @@ Play.prototype = {
     var that = this;
     this.game.physics.startSystem(Phaser.Physics.P2JS);
     this.game.physics.p2.gravity.y = 1200;
+    this.game.physics.p2.setImpactEvents(true);
 
     // background
     this.background = this.game.add.tileSprite(0, 0, 5000, 500, 'background');
@@ -40,12 +41,7 @@ Play.prototype = {
     this.enemy.body.setCollisionGroup(enemyCG);
     
     // Setup Collisions
-    this.tank.body.collides( groundCG );
-    var x = function(a, b) {
-      console.log(a, b)
-    }
-    this.tank.body.collides(enemyCG, x, this);
-    
+    this.tank.body.collides( [groundCG, enemyCG] );
     this.enemy.body.collides( [groundCG, tankCG, this.tank.bulletCG] );
     this.ground.body.collides( [enemyCG, tankCG] );
     

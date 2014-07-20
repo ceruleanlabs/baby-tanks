@@ -14,17 +14,15 @@ var Bullet = function(game, x, y, frame) {
   // enable gravity
   this.game.physics.p2.enableBody(this);
   this.body.allowGravity = true;
-  
-
+  this.isAlive = true;
 };
 
 Bullet.prototype = Object.create(Phaser.Sprite.prototype);
 Bullet.prototype.constructor = Bullet;
 
 Bullet.prototype.update = function() {
-  this.angle = Phaser.Math.radToDeg(Math.atan(this.body.velocity.y/this.body.velocity.x));
-  
-  if (!this.inWorld && this.world.y > this.game.height)
+  this.angle = Phaser.Math.radToDeg(Math.atan(this.body.velocity.y / this.body.velocity.x));
+  if ((!this.inWorld && this.world.y > this.game.height) || !this.isAlive)
     this.destroy();
 };
 

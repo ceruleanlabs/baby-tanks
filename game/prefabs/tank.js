@@ -8,7 +8,7 @@ var Tank = function(game, x, y, frame) {
   this.bulletCG = game.physics.p2.createCollisionGroup();
   this.enemyCG;
   // The super call to Phaser.Sprite
-  Phaser.Sprite.call(this, game, x, y, 'tank', frame);
+  Phaser.Sprite.call(this, game, x, y, 'tank', 1);
   // set the sprite's anchor to the center
   this.anchor.setTo(0.5, 0.5);
 
@@ -39,7 +39,7 @@ var Tank = function(game, x, y, frame) {
   game.add.existing(this.crosshair);
 
   // cannon
-  this.cannon = new Phaser.Sprite(game, 25, -20, 'cannon');
+  this.cannon = new Phaser.Sprite(game, 27, -10, 'cannon');
   this.cannon.anchor.setTo(0, 0.5);
   this.addChild(this.cannon);
   this.cannonAngleMax = 98;
@@ -122,12 +122,9 @@ Tank.prototype.fire = function() {
   this.game.add.existing(bullet);
   
   bullet.body.setCollisionGroup(this.bulletCG);
-  var x = function(objOne, objTwo) {
-    console.log(objOne, objTwo);
-  }
-  bullet.body.collides(this.enemyCG, x, this);
-  console.log((timeElapsed / this.powerTime) * this.maxPower + this.minPower);
+  bullet.body.collides(this.enemyCG, this.hit, this);
   bulletVelocity.setMagnitude((timeElapsed / this.powerTime) * this.maxPower + this.minPower);
+  
   bullet.fire(bulletVelocity.x * this.scale.x, -bulletVelocity.y);
   this.tankFireSound.play();
   this.crosshair.body.angularVelocity = 2;
@@ -149,7 +146,7 @@ Tank.prototype.getVectorCannon = function() {
 
 Tank.prototype.getAngleFromVector = function() {
   var vec = this.getVectorFromCursor();
-  var angle = Phaser.Math.radToDeg(Math.atan(vec.y/vec.x));
+  var angle = Phaser.Math.radToDeg(Math.atan(vec.y / vec.x));
   if(vec.x < 0 && vec.y > 0)
     angle = 180 + angle;
   else if(vec.x < 0 && vec.y < 0)
@@ -160,15 +157,8 @@ Tank.prototype.getAngleFromVector = function() {
 }
 
 Tank.prototype.hit = function(bullet, enemy) {
-  console.log(bullet, enemy)
-   var dieText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Score: 0", {
-        font: "20px Arial",
-        fill: "#ff0044",
-        align: "left"
-    });
-    dieText.fixedToCamera = false;
-    dieText.setText("YOU MURDERED YEOMAN");
-  
+  bullet.sprite.isAlive = false;
+  enemy.sprite.decreaseHealth(3, bullet.velocity);
 }
 
 module.exports = Tank;
