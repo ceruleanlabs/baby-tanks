@@ -2,11 +2,11 @@
 
 var Bullet = require('../prefabs/bullet');
 var Crosshair = require('../prefabs/crosshair');
+var firing = false;
 
 var Tank = function(game, x, y, frame) {
   // The super call to Phaser.Sprite
   Phaser.Sprite.call(this, game, x, y, 'tank', frame);
-
   // set the sprite's anchor to the center
   this.anchor.setTo(0.5, 0.5);
 
@@ -14,7 +14,7 @@ var Tank = function(game, x, y, frame) {
   // this.animations.add('flap');
   // this.animations.play('flap', 12, true);
 
-  // enable gravity
+  // enable physics
   this.game.physics.p2.enableBody(this);
 
   //  And some controls to play the game with
@@ -79,13 +79,18 @@ Tank.prototype.move = function(moveKey) {
   }
 };
 
+Tank.prototype.beforeFire = function() {
+  this.crosshair.body.angularVelocity = 10;
+  this.crosshair.body.angularDamping = 50;
+}
+
 Tank.prototype.fire = function() {
   var bullet = new Bullet(this.game, this.body.x, this.body.y);
   this.game.add.existing(bullet);
-  var bulletVelocity = this.getAngleFromCursor();
+  var bulletVelocity = this.getAngleFromVector();
   bullet.fire(bulletVelocity.x, bulletVelocity.y);
-  this.getAngleFromCursor();
   this.tankFireSound.play();
+  this.crosshair.body.angularVelocity = 2;
 };
 
 Tank.prototype.getVectorFromCursor = function() {

@@ -4,7 +4,11 @@ var Crosshair = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'crosshair', frame);
 
   this.anchor.setTo(0.5, 0.5);
-  this.rotateSpeed = 90;
+  
+  this.game.physics.p2.enableBody(this);
+  this.body.data.gravityScale = 0;
+  this.body.angularVelocity = 2;
+  this.body.angularDamping = 0;
   
 };
 
@@ -13,8 +17,8 @@ Crosshair.prototype.constructor = Crosshair;
 
 Crosshair.prototype.update = function() {
   
-  this.x = this.game.input.mousePointer.x;
-  this.y = this.game.input.mousePointer.y;
+  this.body.x = this.game.input.mousePointer.x;
+  this.body.y = this.game.input.mousePointer.y;
 
   this.angle += this.rotateSpeed * (this.game.time.elapsed / 1000);
 };
