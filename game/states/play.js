@@ -33,12 +33,18 @@ Play.prototype = {
     // Create/add a enemy
     this.enemy = new Enemy(this.game, 600, 300);
     this.game.add.existing(this.enemy);
+    this.enemy.body.mass = 2;
     var enemyCG = this.game.physics.p2.createCollisionGroup();
     this.tank.enemyCG = enemyCG;
     this.enemy.body.setCollisionGroup(enemyCG);
     
     // Setup Collisions
-    this.tank.body.collides( [groundCG, enemyCG] );
+    this.tank.body.collides( groundCG );
+    var x = function(a, b) {
+      console.log(a, b)
+    }
+    this.tank.body.collides(enemyCG, x, this);
+    
     this.enemy.body.collides( [groundCG, tankCG, this.tank.bulletCG] );
     this.ground.body.collides( [enemyCG, tankCG] );
     

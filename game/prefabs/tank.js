@@ -29,11 +29,11 @@ var Tank = function(game, x, y, frame) {
   this.accelerationSpeed = 20000;
 
   // Create the crosshair
-  this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
+  this.crosshair = new Crosshair(game, game.width/2, game.height/2);
   game.add.existing(this.crosshair);
 
   // cannon
-  this.cannon = new Phaser.Sprite(this.game, 25, -20, 'cannon');
+  this.cannon = new Phaser.Sprite(game, 25, -20, 'cannon');
   this.cannon.anchor.setTo(0, 0.5);
   this.addChild(this.cannon);
   this.cannonAngleMax = 98;
@@ -89,13 +89,16 @@ Tank.prototype.beforeFire = function() {
 }
 
 Tank.prototype.fire = function() {
-  console.log(this.cannon.angle * -1, this.getVectorCannon().x, this.getVectorCannon().y);
   var bulletVelocity = this.getVectorCannon();
   var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width, this.cannon.world.y + bulletVelocity.y * this.cannon.width * -1);
   this.game.add.existing(bullet);
-  bullet.body.mass = 150;
+  
   bullet.body.setCollisionGroup(this.bulletCG);
-  bullet.body.collides(this.enemyCG, this.hit, this);
+  var x = function(objOne, objTwo) {
+    console.log(objOne, objTwo);
+  }
+  bullet.body.collides(this.enemyCG, x, this);
+  
   bulletVelocity.setMagnitude(1000);
   bullet.fire(bulletVelocity.x, -bulletVelocity.y);
   this.tankFireSound.play();
