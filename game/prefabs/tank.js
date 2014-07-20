@@ -45,6 +45,9 @@ var Tank = function(game, x, y, frame) {
   this.cannonAngleMax = 98;
   this.cannonAngleMin = 350;
   this.tankFireSound = this.game.add.audio('tankPewPew');
+  this.minPower = 600;
+  this.maxPower = 2000;
+  this.powerTime = 3000;
 };
 
 Tank.prototype = Object.create(Phaser.Sprite.prototype);
@@ -109,9 +112,11 @@ Tank.prototype.move = function(moveKey) {
 
 Tank.prototype.beforeFire = function() {
   this.firing = true;
+  this.startFiring = (new Date()).getTime();
 }
 
 Tank.prototype.fire = function() {
+  var timeElapsed = ((new Date()).getTime()) - this.startFiring;
   var bulletVelocity = this.getVectorCannon();
   var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width * this.scale.x, this.cannon.world.y + bulletVelocity.y * this.cannon.width * -1);
   this.game.add.existing(bullet);
@@ -121,8 +126,8 @@ Tank.prototype.fire = function() {
     console.log(objOne, objTwo);
   }
   bullet.body.collides(this.enemyCG, x, this);
-  
-  bulletVelocity.setMagnitude(1000);
+  console.log((timeElapsed / this.powerTime) * this.maxPower + this.minPower);
+  bulletVelocity.setMagnitude((timeElapsed / this.powerTime) * this.maxPower + this.minPower);
   bullet.fire(bulletVelocity.x * this.scale.x, -bulletVelocity.y);
   this.tankFireSound.play();
   this.crosshair.body.angularVelocity = 2;
