@@ -32,6 +32,8 @@ var Tank = function(game, x, y, frame) {
   this.cursors = game.input.keyboard.createCursorKeys();
   this.moveRightD = game.input.keyboard.addKey(Phaser.Keyboard.D);
   this.moveLeftA = game.input.keyboard.addKey(Phaser.Keyboard.A);
+  game.input.onDown.add(this.beforeFire, this);
+  game.input.onUp.add(this.fire, this);
 
   // add the cannon
   this.cannon = new Phaser.Sprite(game, 24, -12, 'cannon');
@@ -69,7 +71,7 @@ Tank.prototype.update = function() {
   }
 
   // UPDATE DEBUG TEXT
-  this.debugText.text = "velocity: " + this.body.world.mpx(this.body.velocity.x).toFixed(2) + "\nCannon: " + this.cannon.rotation.toFixed(2);
+  this.debugText.text = "velocity: " + this.body.world.mpx(this.body.velocity.x).toFixed(2) + "\nCannon: " + Phaser.Math.normalizeAngle(this.cannon.rotation).toFixed(2);
 };
 
 Tank.prototype.cursorVector = function() {
@@ -114,6 +116,32 @@ Tank.prototype.updateCannonRotation = function() {
       this.cannon.rotation = newAngle - this.rotation;
     }
   }
+};
+
+Tank.prototype.getVectorCannon = function() {
+  var x = Math.cos(this.cannon.rotation) * this.cannon.width;
+  var y = Math.sin(this.cannon.rotation) * this.cannon.width * -1;
+  return Phaser.Point.normalize(new Phaser.Point(x, y));
+}
+
+Tank.prototype.fire = function() {
+  this.crosshair.stopCharge();
+  var bulletVelocity = this.getVectorCannon();
+  var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width * this.scale.x, this.cannon.world.y + bulletVelocity.y * this.cannon.width * -1);
+  this.game.add.existing(bullet);
+  var timeElapsed = ((new Date()).getTime()) - this.startFiring;
+
+  bulletVelocity.setMagnitude((timeElapsed / this.powerTime) * this.maxPower + this.minPower);
+  bulletVelocity.x += this.body.world.mpx(this.body.velocity.x * -1 * this.scale.x);
+
+  bullet.fire(bulletVelocity.x * this.scale.x, -bulletVelocity.y);
+  this.tankFireSound.play();
+};
+
+Tank.prototype.beforeFire = function() {
+  this.firing = true;
+  this.startFiring = (new Date()).getTime();
+  this.crosshair.startCharge();
 };
 
 module.exports = Tank;
