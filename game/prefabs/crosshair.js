@@ -9,6 +9,7 @@ var Crosshair = function(game, x, y, frame) {
   this.body.data.gravityScale = 0;
   this.body.angularVelocity = 2;
   this.body.angularDamping = 0;
+  this.body.setCollisionGroup([]);
   
 };
 

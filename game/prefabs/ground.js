@@ -5,7 +5,9 @@ var Ground = function(game, x, y, width, height) {
   
   // enable physics on the ground sprite
   // this is needed for collision detection
-  this.game.physics.p2.enableBody(this);
+  this.game.physics.p2.enable(this);
+
+
 
   // we don't want the ground's body
   // to be affected by gravity or external forces
