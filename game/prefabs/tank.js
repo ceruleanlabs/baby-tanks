@@ -151,8 +151,8 @@ Tank.prototype.getVectorFromCursor = function() {
 }
 
 Tank.prototype.getVectorCannon = function() {
-  var x = Math.cos(Phaser.Math.degToRad(this.cannon.angle)) * this.cannon.width;
-  var y = Math.sin(Phaser.Math.degToRad(this.cannon.angle)) * this.cannon.width * -1;
+  var x = Math.cos(Phaser.Math.degToRad(this.cannon.angle  - this.body.angle)) * this.cannon.width;
+  var y = Math.sin(Phaser.Math.degToRad(this.cannon.angle  - this.body.angle)) * this.cannon.width * -1;
   return Phaser.Point.normalize(new Phaser.Point(x, y));
 }
 
