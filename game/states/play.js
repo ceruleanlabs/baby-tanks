@@ -54,7 +54,8 @@ Play.prototype = {
     this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
   },
   update: function() {
-
+    if(this.tank.world.x > 4500)
+      this.game.state.start('gameover');
   }
 };
 
