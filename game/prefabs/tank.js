@@ -32,6 +32,8 @@ var Tank = function(game, x, y, frame) {
   this.cursors = game.input.keyboard.createCursorKeys();
   this.moveRightD = game.input.keyboard.addKey(Phaser.Keyboard.D);
   this.moveLeftA = game.input.keyboard.addKey(Phaser.Keyboard.A);
+  this.spaceBar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  this.spaceBar.onDown.add(this.jump, this);
   game.input.onDown.add(this.beforeFire, this);
   game.input.onUp.add(this.fire, this);
 
@@ -48,9 +50,10 @@ var Tank = function(game, x, y, frame) {
   // add animations
   this.animations.add('moveWheels');
 
-  // debug text
-  var style = { font: "25px Courier", fill: "#000000", align: "left" };
-  this.debugText = game.add.text(0, 0, "", style);
+  // baby
+  this.baby = new Phaser.Sprite(game, -40, -20, 'baby');
+  this.baby.anchor.setTo(0.5, 0.5);
+  this.addChild(this.baby);
 };
 
 Tank.prototype = Object.create(Phaser.Sprite.prototype);
@@ -69,9 +72,6 @@ Tank.prototype.update = function() {
     this.tankEngineSound.volume = 0.3;
     this.animations.stop('moveWheels');
   }
-
-  // UPDATE DEBUG TEXT
-  this.debugText.text = "velocity: " + this.body.world.mpx(this.body.velocity.x).toFixed(2) + "\nCannon: " + Phaser.Math.normalizeAngle(this.cannon.rotation).toFixed(2);
 };
 
 Tank.prototype.cursorVector = function() {
@@ -143,5 +143,11 @@ Tank.prototype.beforeFire = function() {
   this.startFiring = (new Date()).getTime();
   this.crosshair.startCharge();
 };
+
+Tank.prototype.jump = function() {
+  console.log(this.y);
+  if (this.y >= 445)
+    this.body.velocity.y += -400;
+}
 
 module.exports = Tank;
