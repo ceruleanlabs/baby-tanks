@@ -2,7 +2,6 @@
 var config = require('./config.json');
 var _ = require('underscore');
 _.str = require('underscore.string');
-grunt.loadNpmTasks('grunt-gh-pages');
 
 // Mix in non-conflict functions to Underscore namespace if you want
 _.mixin(_.str.exports());
@@ -16,6 +15,7 @@ var mountFolder = function (connect, dir) {
 module.exports = function (grunt) {
   // load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+  grunt.loadNpmTasks('grunt-gh-pages');
 
   grunt.initConfig({
     watch: {
@@ -71,7 +71,7 @@ module.exports = function (grunt) {
         dest: 'dist/js/game.js'
       }
     },
-    gh-pages: {
+    'gh-pages': {
       options: {
         base: 'dist'
       },
