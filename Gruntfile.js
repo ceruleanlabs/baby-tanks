@@ -1,8 +1,8 @@
-// Generated on 2014-03-28 using generator-phaser-official 0.0.8-rc-2
 'use strict';
 var config = require('./config.json');
 var _ = require('underscore');
 _.str = require('underscore.string');
+grunt.loadNpmTasks('grunt-gh-pages');
 
 // Mix in non-conflict functions to Underscore namespace if you want
 _.mixin(_.str.exports());
@@ -12,11 +12,11 @@ var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 var mountFolder = function (connect, dir) {
   return connect.static(require('path').resolve(dir));
 };
- 
+
 module.exports = function (grunt) {
   // load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
- 
+
   grunt.initConfig({
     watch: {
       scripts: {
@@ -70,9 +70,15 @@ module.exports = function (grunt) {
         src: ['game/main.js'],
         dest: 'dist/js/game.js'
       }
+    },
+    gh-pages: {
+      options: {
+        base: 'dist'
+      },
+      src: ['**']
     }
   });
-  
+
   grunt.registerTask('build', ['buildBootstrapper', 'browserify','copy']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
