@@ -98,43 +98,37 @@ Tank.prototype.updateMovement = function() {
 
 Tank.prototype.updateCannonRotation = function() {
     if(this.crosshair != null) {
-    if(this.scale.x == 1) {
       var newAngle = Phaser.Math.angleBetweenPoints(this.position, this.crosshair.position); // Rad
-      newAngle = Phaser.Math.normalizeAngle(newAngle);
+      newAngle = newAngle - this.rotation;
+      newAngle = Phaser.Math.normalizeAngle(this.scale.x == 1 ? newAngle : Math.PI - newAngle);
+
       if(newAngle > Math.PI)
-        newAngle = Phaser.Math.clamp(Phaser.Math.normalizeAngle(newAngle), this.cannonAngleMin, Math.PI * 2);
+        newAngle = Phaser.Math.clamp(newAngle, this.cannonAngleMin, Math.PI * 2);
       else
-        newAngle = Phaser.Math.clamp(Phaser.Math.normalizeAngle(newAngle), 0, this.cannonAngleMax);
-      this.cannon.rotation = newAngle - this.rotation;
-    } else {
-      var newAngle = Phaser.Math.angleBetweenPoints(new Phaser.Point(-this.x, this.y), new Phaser.Point(-this.crosshair.position.x, this.crosshair.position.y)); // Rad
-      newAngle = Phaser.Math.normalizeAngle(newAngle);
-      if(newAngle > Math.PI)
-        newAngle = Phaser.Math.clamp(Phaser.Math.normalizeAngle(newAngle), this.cannonAngleMin, Math.PI * 2);
-      else
-        newAngle = Phaser.Math.clamp(Phaser.Math.normalizeAngle(newAngle), 0, this.cannonAngleMax);
-      this.cannon.rotation = newAngle - this.rotation;
-    }
+        newAngle = Phaser.Math.clamp(newAngle, 0, this.cannonAngleMax);
+
+      this.cannon.rotation = newAngle;
   }
 };
 
 Tank.prototype.getVectorCannon = function() {
-  var x = Math.cos(this.cannon.rotation) * this.cannon.width;
-  var y = Math.sin(this.cannon.rotation) * this.cannon.width * -1;
+  var canRotation = Phaser.Math.normalizeAngle(this.rotation + (this.scale.x == 1 ? this.cannon.rotation : Math.PI - this.cannon.rotation ));
+  var x = Math.cos(canRotation) * this.cannon.width;
+  var y = Math.sin(canRotation) * this.cannon.width * -1;
   return Phaser.Point.normalize(new Phaser.Point(x, y));
 }
 
 Tank.prototype.fire = function() {
   this.crosshair.stopCharge();
   var bulletVelocity = this.getVectorCannon();
-  var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width * this.scale.x, this.cannon.world.y + bulletVelocity.y * this.cannon.width * -1);
+  var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width, this.cannon.world.y - bulletVelocity.y * this.cannon.width );
   this.game.add.existing(bullet);
   var timeElapsed = ((new Date()).getTime()) - this.startFiring;
 
   bulletVelocity.setMagnitude((timeElapsed / this.powerTime) * this.maxPower + this.minPower);
-  bulletVelocity.x += this.body.world.mpx(this.body.velocity.x * -1 * this.scale.x);
+  bulletVelocity.x += this.body.world.mpx(this.body.velocity.x * -1);
 
-  bullet.fire(bulletVelocity.x * this.scale.x, -bulletVelocity.y);
+  bullet.fire(bulletVelocity.x, -bulletVelocity.y);
   this.tankFireSound.play();
 };
 
@@ -145,7 +139,6 @@ Tank.prototype.beforeFire = function() {
 };
 
 Tank.prototype.jump = function() {
-  console.log(this.y);
   if (this.y >= 445)
     this.body.velocity.y += -400;
 }

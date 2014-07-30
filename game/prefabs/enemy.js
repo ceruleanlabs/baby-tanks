@@ -10,6 +10,9 @@ var Enemy = function(game, x, y, frame) {
   this.body.mass = 3;
   this.health = 10;
 
+  // Magnitude of hits required to damage this entity
+  this.collissionMagnitude = 30;
+
   this.body.onBeginContact.add(this.checkCollision, this);
 
 };
@@ -46,8 +49,10 @@ Enemy.prototype.decreaseHealth = function(amount, impactVelocity) {
 Enemy.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations) {
   if(body) {
     if(body.sprite.name == "bullet") {
-      this.decreaseHealth(5, body.velocity);
-      body.sprite.destroy();
+      if((new Phaser.Point(body.velocity.x, body.velocity.y)).getMagnitude() > this.collissionMagnitude) {
+        this.decreaseHealth(5, body.velocity);
+        body.sprite.destroy();
+      }
     }
   }
 };
