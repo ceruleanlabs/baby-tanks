@@ -14,7 +14,6 @@ var Enemy = function(game, x, y, frame) {
   this.collissionMagnitude = 30;
 
   this.body.onBeginContact.add(this.checkCollision, this);
-
 };
 
 Enemy.prototype = Object.create(Phaser.Sprite.prototype);
@@ -43,6 +42,9 @@ Enemy.prototype.decreaseHealth = function(amount, impactVelocity) {
 
     emitter.start(true, 2000, null, 50);
     this.destroy();
+  } else {
+    // Flash red when taking damage
+    this.game.add.tween(this).to( {tint: 0xFF0000 }, 75, Phaser.Easing.Linear.None, true, 0, 0, true);
   }
 };
 
