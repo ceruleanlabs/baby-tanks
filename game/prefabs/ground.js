@@ -2,6 +2,7 @@
 
 var Ground = function(game, x, y, width, height) {
   Phaser.TileSprite.call(this, game, x, y, width, height, 'ground');
+  this.name = "ground";
   
   // enable physics on the ground sprite
   // this is needed for collision detection
