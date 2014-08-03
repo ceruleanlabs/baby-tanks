@@ -58,6 +58,11 @@ var Tank = function(game, x, y, frame) {
   this.baby = new Phaser.Sprite(game, -40, -20, 'baby');
   this.baby.anchor.setTo(0.5, 0.5);
   this.addChild(this.baby);
+
+  // health tracking
+  this.hearts = [];
+  this.health = 0;
+  this.modifyHealth(3);
 };
 
 Tank.prototype = Object.create(Phaser.Sprite.prototype);
@@ -159,5 +164,21 @@ Tank.prototype.checkCollisionEnd = function(body, shapeA, shapeB) {
     }
   }
 };
+
+Tank.prototype.modifyHealth = function(amount) {
+  this.health += amount;
+
+  while(this.health > this.hearts.length) {
+    var heart = this.game.add.sprite(10 + this.hearts.length * 64, 10, 'heart');
+    heart.fixedToCamera = true;
+    this.hearts.push(heart);
+  }
+
+  while(this.health < this.hearts.length && this.hearts.length >= 0) {
+    var heart = this.hearts.pop();
+    heart.destroy();
+  }
+
+}
 
 module.exports = Tank;

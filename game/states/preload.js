@@ -23,6 +23,7 @@ Preload.prototype = {
     this.load.image('crosshair', 'assets/crosshair.png');
     this.load.image('cannon', 'assets/cannon.png');
     this.load.image('bullet', 'assets/bullet.png');
+    this.load.image('heart', 'assets/heart.png');
     this.load.spritesheet('explosion', 'assets/explosion_sheet.png', 12, 12, 3);
 
     this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
