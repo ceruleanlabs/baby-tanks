@@ -109,7 +109,6 @@ var Enemy = function(game, x, y, frame) {
   this.collissionMagnitude = 30;
 
   this.body.onBeginContact.add(this.checkCollision, this);
-
 };
 
 Enemy.prototype = Object.create(Phaser.Sprite.prototype);
@@ -138,6 +137,9 @@ Enemy.prototype.decreaseHealth = function(amount, impactVelocity) {
 
     emitter.start(true, 2000, null, 50);
     this.destroy();
+  } else {
+    // Flash red when taking damage
+    this.game.add.tween(this).to( {tint: 0xFF0000 }, 75, Phaser.Easing.Linear.None, true, 0, 0, true);
   }
 };
 
@@ -160,6 +162,7 @@ module.exports = Enemy;
 
 var Ground = function(game, x, y, width, height) {
   Phaser.TileSprite.call(this, game, x, y, width, height, 'ground');
+  this.name = "ground";
   
   // enable physics on the ground sprite
   // this is needed for collision detection
@@ -193,6 +196,7 @@ var Tank = function(game, x, y, frame) {
   // MOVEMENT VARIABLES
   this.acceleration = 1200; // px / second
   this.maxSpeed = 200; // px / second
+  this.jumpPower = 400; // px / second
 
   // ATTACK VARIABLES
   this.minPower = 600; // px / second
@@ -212,6 +216,9 @@ var Tank = function(game, x, y, frame) {
   // enable physics
   game.physics.p2.enable(this);
   this.body.damping = 0;
+  this.onGround = false;
+  this.body.onBeginContact.add(this.checkCollision, this);
+  this.body.onEndContact.add(this.checkCollisionEnd, this); // Currently doesn't work with this version of phaser
 
   // enable controls
   this.cursors = game.input.keyboard.createCursorKeys();
@@ -239,6 +246,11 @@ var Tank = function(game, x, y, frame) {
   this.baby = new Phaser.Sprite(game, -40, -20, 'baby');
   this.baby.anchor.setTo(0.5, 0.5);
   this.addChild(this.baby);
+
+  // health tracking
+  this.hearts = [];
+  this.health = 0;
+  this.modifyHealth(3);
 };
 
 Tank.prototype = Object.create(Phaser.Sprite.prototype);
@@ -259,16 +271,6 @@ Tank.prototype.update = function() {
   }
 };
 
-Tank.prototype.cursorVector = function() {
-  if(this.game.crosshair == null)
-    return new Phaser.Point(1, 1);
-
-  var x = (this.game.crosshair.world.x - this.world.x);
-  var y = (this.game.crosshair.world.y - this.world.y);
-  var posDiff = new Phaser.Point(x, y);
-  return Phaser.Point.normalize(posDiff);
-};
-
 Tank.prototype.updateMovement = function() {
   if (this.cursors.right.isDown || this.moveRightD.isDown) {
     this.scale.x = 1; // sets direction to the right
@@ -283,10 +285,15 @@ Tank.prototype.updateMovement = function() {
 
 Tank.prototype.updateCannonRotation = function() {
     if(this.crosshair != null) {
+      // Get the angle between the tank and the crosshair
       var newAngle = Phaser.Math.angleBetweenPoints(this.position, this.crosshair.position); // Rad
+
+      // The new angle of the cannon will be the previous angle - the rotation of the tank
+      // This gives it the correct local rotation
       newAngle = newAngle - this.rotation;
       newAngle = Phaser.Math.normalizeAngle(this.scale.x == 1 ? newAngle : Math.PI - newAngle);
 
+      // Restrict the movement of the cannon
       if(newAngle > Math.PI)
         newAngle = Phaser.Math.clamp(newAngle, this.cannonAngleMin, Math.PI * 2);
       else
@@ -324,8 +331,42 @@ Tank.prototype.beforeFire = function() {
 };
 
 Tank.prototype.jump = function() {
-  if (this.y >= 445)
-    this.body.velocity.y += -400;
+  if (this.onGround) {
+    this.body.velocity.y -= this.jumpPower;
+    this.onGround = false;
+  }
+};
+
+Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations) {
+  if(body) {
+    if(body.sprite.name == "ground") {
+      this.onGround = true;
+    }
+  }
+};
+
+Tank.prototype.checkCollisionEnd = function(body, shapeA, shapeB) {
+  if(body) {
+    if(body.sprite.name == "ground") {
+      this.onGround = false;
+    }
+  }
+};
+
+Tank.prototype.modifyHealth = function(amount) {
+  this.health += amount;
+
+  while(this.health > this.hearts.length) {
+    var heart = this.game.add.sprite(10 + this.hearts.length * 64, 10, 'heart');
+    heart.fixedToCamera = true;
+    this.hearts.push(heart);
+  }
+
+  while(this.health < this.hearts.length && this.hearts.length >= 0) {
+    var heart = this.hearts.pop();
+    heart.destroy();
+  }
+
 }
 
 module.exports = Tank;
@@ -496,6 +537,7 @@ Preload.prototype = {
     this.load.image('crosshair', 'assets/crosshair.png');
     this.load.image('cannon', 'assets/cannon.png');
     this.load.image('bullet', 'assets/bullet.png');
+    this.load.image('heart', 'assets/heart.png');
     this.load.spritesheet('explosion', 'assets/explosion_sheet.png', 12, 12, 3);
 
     this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
