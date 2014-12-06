@@ -155,7 +155,7 @@ Tank.prototype.beforeFire = function() {
   this.firing = true;
   this.startFiring = (new Date()).getTime();
   this.crosshair.startCharge();
-  this.tankChargingSound.play('', 0, 0.5, false);
+  this.tankChargingSound.play('', 0, 0.3, false);
 };
 
 Tank.prototype.jump = function() {
@@ -175,8 +175,8 @@ Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations)
       this.onGround = true;
     }
 
-    if(body.sprite.name == "enemy") {
-      console.log('BAM!')
+    if(body.sprite.name === 'enemy') {
+      console.log('BAM!');
     }
 
     if(body.sprite.name === 'health') {
@@ -197,8 +197,9 @@ Tank.prototype.checkCollisionEnd = function(body, shapeA, shapeB) {
 };
 
 Tank.prototype.modifyHealth = function(amount) {
-  if(amount < 0 && (this.lastHit != null && ((new Date()).getTime() - this.lastHit) < this.invulnerablePeriod))
+  if(amount < 0 && (this.lastHit !== null && ((new Date()).getTime() - this.lastHit) < this.invulnerablePeriod)) {
     return;
+  }
 
   this.health += amount;
   var heart;
