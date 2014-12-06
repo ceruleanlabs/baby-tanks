@@ -25,7 +25,11 @@ Preload.prototype = {
     this.load.image('cannon', 'assets/cannon.png');
     this.load.image('bullet', 'assets/bullet.png');
     this.load.image('heart', 'assets/heart.png');
+    this.load.image('brickWall', 'assets/brick_wall.png');
+    this.load.image('smoke', 'assets/smoke.png');
+    this.load.spritesheet('castle', 'assets/castle.png', 300, 300);
     this.load.spritesheet('explosion', 'assets/explosion_sheet.png', 12, 12, 3);
+    this.load.spritesheet('bricksplosion', 'assets/brick_explosion_sheet.png', 16, 16);
 
     this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
     this.load.audio('backgroundMusic', 'assets/sounds/background_music.m4a');

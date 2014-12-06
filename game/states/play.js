@@ -7,7 +7,7 @@ var Enemy     = require('../prefabs/enemy');
 var MovingEnemy     = require('../prefabs/movingEnemy');
 var StationaryShooter     = require('../prefabs/stationary_shooter');
 var HealthPickup     = require('../prefabs/health_pickup');
-
+var Castle    = require('../prefabs/castle');
 
 function Play() {}
 Play.prototype = {
@@ -50,13 +50,22 @@ Play.prototype = {
     // this.game.add.existing(this.enemy);
 
     //moving enemy
-    this.movingEnemy = new MovingEnemy(this.game, 800, 300, 200);
-    this.game.add.existing(this.movingEnemy);
+    // this.movingEnemy = new MovingEnemy(this.game, 800, 300, 200);
+    // this.game.add.existing(this.movingEnemy);
 
-    //health
     this.healthPickup = new HealthPickup(this.game, 400, 300,1);
     this.game.add.existing(this.healthPickup);
-    // this.game.debug(this.healthPickup.sprite);
+
+    // var stationaryEnemy = new StationaryShooter(this.game, 1200, 300);
+    // stationaryEnemy.target = this.tank;
+    // this.game.add.existing(stationaryEnemy);
+
+    // var wall = this.game.add.sprite(300, 250, 'brickWall');
+    // this.game.physics.p2.enable(wall);
+    // wall.body.mass = 10;
+
+    this.castle = new Castle(this.game, 900, 330);
+    this.game.add.existing(this.castle);
 
     // Camera
     this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);

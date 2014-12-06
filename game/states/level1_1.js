@@ -7,7 +7,7 @@ var Enemy     = require('../prefabs/enemy');
 var MovingEnemy     = require('../prefabs/movingEnemy');
 var StationaryShooter     = require('../prefabs/stationary_shooter');
 var HealthPickup     = require('../prefabs/health_pickup');
-
+var Castle    = require('../prefabs/castle');
 
 function Play() {}
 Play.prototype = {
@@ -58,6 +58,9 @@ Play.prototype = {
     // this.game.add.existing(this.healthPickup);
     // this.game.debug(this.healthPickup.sprite);
 
+    this.castle = new Castle(this.game, 1500, 330);
+    this.game.add.existing(this.castle);
+
     // Camera
     this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
 
@@ -69,15 +72,21 @@ Play.prototype = {
   },
   update: function() {
     if(this.tank.health <= 0) {
-      this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
+      this.end_timer = this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
         this.game.state.start('next_level', true, false, 1, 1, false);
       }, this);
-
     }
-    if(this.tank.world.x > 500) {
-      this.game.state.start('next_level', true, false, 1, 2,true)
+
+    if(this.castle.destroyed) {
+      if(this.end_timer != null) this.end_timer.destroy();
+
+      this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
+        this.game.state.start('next_level', true, false, 1, 2, true);
+      }, this);
     }
   }
 };
+
+
 
 module.exports = Play;
