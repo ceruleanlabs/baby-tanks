@@ -54,8 +54,8 @@ Play.prototype = {
     this.game.add.existing(this.movingEnemy);
 
     //health
-    this.healthPickup = new HealthPickup(this.game, 400, 300,1);
-    this.game.add.existing(this.healthPickup);
+    // this.healthPickup = new HealthPickup(this.game, 400, 300,1);
+    // this.game.add.existing(this.healthPickup);
     // this.game.debug(this.healthPickup.sprite);
 
     // Camera
@@ -70,12 +70,13 @@ Play.prototype = {
   update: function() {
     if(this.tank.health <= 0) {
       this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
-        this.game.state.start('gameover', true, false, false);
+        this.game.state.start('next_level', true, false, 1, 1, false);
       }, this);
 
     }
-    if(this.tank.world.x > 4500)
-      this.game.state.start('level_manager', true, false, true);
+    if(this.tank.world.x > 500) {
+      this.game.state.start('next_level', true, false, 1, 2,true)
+    }
   }
 };
 

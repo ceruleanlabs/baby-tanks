@@ -7,7 +7,10 @@ window.onload = function () {
   // Game States
   game.state.add('boot', require('./states/boot'));
   game.state.add('gameover', require('./states/gameover'));
+  game.state.add('level1_1', require('./states/level1_1'));
+  game.state.add('level1_2', require('./states/level1_2'));
   game.state.add('menu', require('./states/menu'));
+  game.state.add('next_level', require('./states/next_level'));
   game.state.add('play', require('./states/play'));
   game.state.add('preload', require('./states/preload'));
   
