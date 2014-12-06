@@ -21,6 +21,7 @@ var Tank = function(game, x, y, frame) {
 
   // The super call to Phaser.Sprite
   Phaser.Sprite.call(this, game, x, y, 'babyTank', 1);
+  this.name = 'babyTank';
 
   // set the sprite's anchor to the center
   this.anchor.setTo(0.5, 0.5);
@@ -158,6 +159,10 @@ Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations)
     }
     else if(body.sprite.name == "ground") {
       this.onGround = true;
+    }
+
+    if(body.sprite.name == "enemy") {
+      console.log('BAM!')
     }
   }
 };

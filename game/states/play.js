@@ -4,7 +4,9 @@ var Ground    = require('../prefabs/ground');
 var Tank      = require('../prefabs/tank');
 var Crosshair = require('../prefabs/crosshair');
 var Enemy     = require('../prefabs/enemy');
+var MovingEnemy     = require('../prefabs/movingEnemy');
 var StationaryShooter     = require('../prefabs/stationary_shooter');
+
 
 function Play() {}
 Play.prototype = {
@@ -42,9 +44,14 @@ Play.prototype = {
     this.tank.crosshair = this.crosshair;
 
     // Create/add a enemy
-    this.stationary_shooter = new StationaryShooter(this.game, 600, 300);
-    this.stationary_shooter.target = this.tank;
-    this.game.add.existing(this.stationary_shooter);
+
+    // this.enemy = new Enemy(this.game, 600, 300);
+    // this.game.add.existing(this.enemy);
+
+    //moving enemy
+    this.movingEnemy = new MovingEnemy(this.game, 600, 300);
+    this.game.add.existing(this.movingEnemy);
+
 
     // Camera
     this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
