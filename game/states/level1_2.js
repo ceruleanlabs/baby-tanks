@@ -52,6 +52,10 @@ Play.prototype = {
     //moving enemy
     this.movingEnemy = new MovingEnemy(this.game, 800, 300, 200);
     this.game.add.existing(this.movingEnemy);
+    this.movingEnemy = new MovingEnemy(this.game, 1200, 300, 200);
+    this.game.add.existing(this.movingEnemy);    
+    this.movingEnemy = new MovingEnemy(this.game, 1600, 300, 200);
+    this.game.add.existing(this.movingEnemy);
 
     //health
     this.healthPickup = new HealthPickup(this.game, 400, 300,1);
@@ -70,12 +74,13 @@ Play.prototype = {
   update: function() {
     if(this.tank.health <= 0) {
       this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
-        this.game.state.start('gameover', true, false, false);
+        this.game.state.start('next_level', 1, 1, true);
       }, this);
 
     }
-    if(this.tank.world.x > 4500)
-      this.game.state.start('level_manager', true, false, true);
+    if(this.tank.world.x > 4500) {
+      this.game.state.start('next_level', 1, 2, true);
+    }
   }
 };
 
