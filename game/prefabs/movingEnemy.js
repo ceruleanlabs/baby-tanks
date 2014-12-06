@@ -1,5 +1,5 @@
 'use strict';
-var MovingEnemy = function(game, x, y, moveDistance, moveSpeed, frame) {
+var MovingEnemy = function(game, x, y, moveDistance, moveSpeed, invincible, frame) {
   // The super call to Phaser.Sprite
   Phaser.Sprite.call(this, game, x, y, 'bigEnemy', frame);
   this.name = 'enemy';
@@ -8,7 +8,9 @@ var MovingEnemy = function(game, x, y, moveDistance, moveSpeed, frame) {
   // enable gravity
   this.game.physics.p2.enableBody(this);
   this.body.mass = 3;
+
   this.health = 10;
+  this.invincible = invincible || false;
 
   // Magnitude of hits required to damage this entity
   this.collissionMagnitude = 30;
@@ -21,7 +23,6 @@ var MovingEnemy = function(game, x, y, moveDistance, moveSpeed, frame) {
   this.changeTime = 2; // changes directions every three seconds
   this.startingX = x;
   this.moveDistance = moveDistance || 100;
-  // this.shouldChangeDirection = false;
 
   this.animations.add('moveMouth');
 
@@ -42,6 +43,10 @@ MovingEnemy.prototype.update = function() {
 };
 
 MovingEnemy.prototype.decreaseHealth = function(amount, impactVelocity) {
+  amount = amount || this.health;
+  console.log(impactVelocity);
+  impactVelocity = impactVelocity || {x:300, y:500};
+
   this.health -= amount;
 
   // Create the death particles
@@ -70,16 +75,16 @@ MovingEnemy.prototype.checkCollision = function(body, shapeA, shapeB, contactEqu
     if (body.sprite.name === 'babyTank') {
       body.sprite.modifyHealth(-1);
 
+      if (!this.invincible) {
+        this.game.time.events.add(Phaser.Timer.SECOND/1000 , this.decreaseHealth, this);
+      }
+
     } else if(body.sprite.name === 'bullet') {
       if((new Phaser.Point(body.velocity.x, body.velocity.y)).getMagnitude() > this.collissionMagnitude) {
         this.decreaseHealth(5, body.velocity);
         body.sprite.destroy();
       }
     }
-
-    // if (body.sprite.name == "babyTank") {
-    //   this.decreaseHealth(this.health, this.collissionMagnitude);
-    // }
   }
 };
 

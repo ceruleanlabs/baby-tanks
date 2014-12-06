@@ -16,6 +16,7 @@ var Tank = function(game, x, y, frame) {
   this.powerTime = 3000; // Time till max charge in ms
   this.cannonAngleMax = 0.4; // rad
   this.cannonAngleMin = 5.05; // rad
+  this.invulnerablePeriod = 2000; // milliseconds
 
   /** END GAMEPLAY VARIABLES */
 
@@ -177,6 +178,11 @@ Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations)
     if(body.sprite.name == "enemy") {
       console.log('BAM!')
     }
+
+    if(body.sprite.name === 'health') {
+      this.modifyHealth(body.sprite.amount);
+      body.sprite.destroy();
+    }
   }
 };
 
@@ -185,10 +191,15 @@ Tank.prototype.checkCollisionEnd = function(body, shapeA, shapeB) {
     if(body.sprite.name === 'ground') {
       this.onGround = false;
     }
+
+
   }
 };
 
 Tank.prototype.modifyHealth = function(amount) {
+  if(amount < 0 && (this.lastHit != null && ((new Date()).getTime() - this.lastHit) < this.invulnerablePeriod))
+    return;
+
   this.health += amount;
   var heart;
 
@@ -204,6 +215,7 @@ Tank.prototype.modifyHealth = function(amount) {
   }
 
   if(amount < 0) {
+    this.lastHit = (new Date()).getTime();
     this.damageTaken();
   }
 };
