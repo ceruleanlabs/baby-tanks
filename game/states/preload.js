@@ -27,10 +27,11 @@ Preload.prototype = {
     this.load.spritesheet('explosion', 'assets/explosion_sheet.png', 12, 12, 3);
 
     this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
-    this.load.audio('backgroundMusic', 'assets/music.wav');
-    this.load.audio('tankPewPew', 'assets/tank_pewpew.mp3');
-    this.load.audio('tankEngine', 'assets/tank_enginesound.mp3');
-    this.load.audio('bulletSplode', 'assets/bullet_splosion.mp3');
+    this.load.audio('backgroundMusic', 'assets/sounds/background_music.m4a');
+    this.load.audio('tankPewPew', 'assets/sounds/tank_pewpew.mp3');
+    this.load.audio('tankEngine', 'assets/sounds/tank_enginesound.mp3');
+    this.load.audio('tankCharging', 'assets/sounds/tank_charging.m4a');
+    this.load.audio('bulletSplode', 'assets/sounds/bullet_splosion.mp3');
   },
   create: function() {
     this.asset.cropEnabled = false;
