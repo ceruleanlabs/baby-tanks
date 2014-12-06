@@ -1,5 +1,5 @@
 'use strict';
-var MovingEnemy = function(game, x, y, frame) {
+var MovingEnemy = function(game, x, y, moveDistance, moveSpeed, frame) {
   // The super call to Phaser.Sprite
   Phaser.Sprite.call(this, game, x, y, 'enemy', frame);
   this.name = 'enemy';
@@ -16,10 +16,12 @@ var MovingEnemy = function(game, x, y, frame) {
   // Movement variables
   this.acceleration = 400; // px / second
   this.maxSpeed = 400; // px / second
+  this.moveSpeed = moveSpeed || 300;
   this.scale.x = -1; // starts facing player
   this.changeTime = 2; // changes directions every three seconds
-
-  this.shouldChangeDirection = false;
+  this.startingX = x;
+  this.moveDistance = moveDistance || 100;
+  // this.shouldChangeDirection = false;
 
   this.body.onBeginContact.add(this.checkCollision, this);
 };
@@ -48,7 +50,7 @@ MovingEnemy.prototype.decreaseHealth = function(amount, impactVelocity) {
     emitter.maxParticleScale = 1;
 
     emitter.start(true, 2000, null, 50);
-    // this.destroy();
+    this.destroy();
   } else {
     // Flash red when taking damage
     this.game.add.tween(this).to( {tint: 0xFF0000 }, 75, Phaser.Easing.Linear.None, true, 0, 0, true);
@@ -56,13 +58,11 @@ MovingEnemy.prototype.decreaseHealth = function(amount, impactVelocity) {
 };
 
 MovingEnemy.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations) {
-  if(body) {
+  if(body && body.sprite) {
     if (body.sprite.name == "babyTank") {
-      // debugger
-      this.decreaseHealth(10, new Phaser.Point(30, 30)) //{x:30, y:30})
-    }
+      body.sprite.modifyHealth(-1); 
 
-    if(body.sprite.name == "bullet") {
+    } else if(body.sprite.name == "bullet") {
       if((new Phaser.Point(body.velocity.x, body.velocity.y)).getMagnitude() > this.collissionMagnitude) {
         this.decreaseHealth(5, body.velocity);
         body.sprite.destroy();
@@ -76,16 +76,14 @@ MovingEnemy.prototype.checkCollision = function(body, shapeA, shapeB, contactEqu
 };
 
 MovingEnemy.prototype.updateMovement = function(direction) {
-  this.body.velocity.x = 300 * direction;
-  
-  var second = Math.floor(this.game.time.time/1000);
-  
-  if ((second % this.changeTime === 0) && (this.shouldChangeDirection)) {
-    this.scale.x *= -1;
-    this.shouldChangeDirection = false; 
-  } else if (second % this.changeTime !== 0) {
-    this.shouldChangeDirection = true;
+  this.body.velocity.x = this.moveSpeed * direction;
+
+  if ( this.x <= this.startingX - this.moveDistance ) {
+    this.scale.x = 1;
+  } else if ( this.x >= this.startingX + this.moveDistance ) {
+    this.scale.x = -1;
   }
+
 };
 
 // MovingEnemy.prototype.get
