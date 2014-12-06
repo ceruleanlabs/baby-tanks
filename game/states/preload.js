@@ -30,8 +30,8 @@ Preload.prototype = {
     this.load.audio('backgroundMusic', 'assets/sounds/background_music.m4a');
     this.load.audio('tankPewPew', 'assets/sounds/tank_pewpew.mp3');
     this.load.audio('tankEngine', 'assets/sounds/tank_enginesound.mp3');
-    this.load.audio('tankCharging', 'assets/sounds/tank_charging.m4a');
-    this.load.audio('bulletSplode', 'assets/sounds/bullet_splosion.mp3');
+    this.load.audio('tankCharging', 'assets/sounds/tank_charge.m4a');
+    // this.load.audio('bulletSplode', 'assets/sounds/bullet_splosion.mp3');
   },
   create: function() {
     this.asset.cropEnabled = false;
