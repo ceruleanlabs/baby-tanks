@@ -4,6 +4,7 @@ var Ground    = require('../prefabs/ground');
 var Tank      = require('../prefabs/tank');
 var Crosshair = require('../prefabs/crosshair');
 var Enemy     = require('../prefabs/enemy');
+var StationaryShooter     = require('../prefabs/stationary_shooter');
 
 function Play() {}
 Play.prototype = {
@@ -41,8 +42,9 @@ Play.prototype = {
     this.tank.crosshair = this.crosshair;
 
     // Create/add a enemy
-    this.enemy = new Enemy(this.game, 600, 300);
-    this.game.add.existing(this.enemy);
+    this.stationary_shooter = new StationaryShooter(this.game, 600, 300);
+    this.stationary_shooter.target = this.tank;
+    this.game.add.existing(this.stationary_shooter);
 
     // Camera
     this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
@@ -54,8 +56,14 @@ Play.prototype = {
     this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
   },
   update: function() {
+    if(this.tank.health <= 0) {
+      this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
+        this.game.state.start('gameover', true, false, false);
+      }, this);
+
+    }
     if(this.tank.world.x > 4500)
-      this.game.state.start('gameover');
+      this.game.state.start('gameover', true, false, true);
   }
 };
 

@@ -152,7 +152,11 @@ Tank.prototype.jump = function() {
 
 Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations) {
   if(body) {
-    if(body.sprite.name === 'ground') {
+    if(body.sprite.name == "enemy_bullet") {
+      this.modifyHealth(-1);
+      body.sprite.destroy();
+    }
+    else if(body.sprite.name == "ground") {
       this.onGround = true;
     }
   }
@@ -180,6 +184,34 @@ Tank.prototype.modifyHealth = function(amount) {
     heart = this.hearts.pop();
     heart.destroy();
   }
-};
+
+  if(amount < 0) {
+    this.damageTaken();
+  }
+}
+
+Tank.prototype.damageTaken = function() {
+  console.log("HERE")
+  // Create the death particles
+  if (this.health <= 0)
+    {
+      var emitter = this.game.add.emitter(this.x, this.y, 400);
+      emitter.width = this.width - 50;
+      emitter.height = this.height - 50;
+      emitter.makeParticles('explosion');
+      emitter.minParticleSpeed.set(-100, -300);
+      emitter.maxParticleSpeed.set(100, -100);
+      emitter.gravity = 300;
+      emitter.setRotation(-100, 100);
+      emitter.minParticleScale = 0.25;
+      emitter.maxParticleScale = 3;
+
+      emitter.start(true, 2000, null, 50);
+      this.destroy();
+    } else {
+      // Flash red when taking damage
+      this.game.add.tween(this).to( {tint: 0xFF0000 }, 75, Phaser.Easing.Linear.None, true, 0, 0, true);
+    }
+}
 
 module.exports = Tank;
