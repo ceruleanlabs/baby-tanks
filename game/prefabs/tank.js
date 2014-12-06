@@ -178,6 +178,11 @@ Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations)
     if(body.sprite.name == "enemy") {
       console.log('BAM!')
     }
+
+    if(body.sprite.name === 'health') {
+      this.modifyHealth(body.sprite.amount);
+      body.sprite.destroy();
+    }
   }
 };
 
@@ -186,6 +191,8 @@ Tank.prototype.checkCollisionEnd = function(body, shapeA, shapeB) {
     if(body.sprite.name === 'ground') {
       this.onGround = false;
     }
+
+
   }
 };
 

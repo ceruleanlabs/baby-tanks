@@ -6,6 +6,7 @@ var Crosshair = require('../prefabs/crosshair');
 var Enemy     = require('../prefabs/enemy');
 var MovingEnemy     = require('../prefabs/movingEnemy');
 var StationaryShooter     = require('../prefabs/stationary_shooter');
+var HealthPickup     = require('../prefabs/health_pickup');
 
 
 function Play() {}
@@ -49,9 +50,13 @@ Play.prototype = {
     // this.game.add.existing(this.enemy);
 
     //moving enemy
-    this.movingEnemy = new MovingEnemy(this.game, 600, 300);
+    this.movingEnemy = new MovingEnemy(this.game, 800, 300, 200);
     this.game.add.existing(this.movingEnemy);
 
+    //health
+    this.healthPickup = new HealthPickup(this.game, 400, 300,1);
+    this.game.add.existing(this.healthPickup);
+    // this.game.debug(this.healthPickup.sprite);
 
     // Camera
     this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
