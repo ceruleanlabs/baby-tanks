@@ -16,6 +16,7 @@ var Tank = function(game, x, y, frame) {
   this.powerTime = 3000; // Time till max charge in ms
   this.cannonAngleMax = 0.4; // rad
   this.cannonAngleMin = 5.05; // rad
+  this.invulnerablePeriod = 2000; // milliseconds
 
   /** END GAMEPLAY VARIABLES */
 
@@ -48,7 +49,8 @@ var Tank = function(game, x, y, frame) {
   this.addChild(this.cannon);
   this.tankFireSound = this.game.add.audio('tankPewPew');
 
-  // add the engine sound
+  // add the tank sounds
+  this.tankChargingSound = this.game.add.audio('tankCharging');
   this.tankEngineSound = this.game.add.audio('tankEngine');
   this.tankEngineSound.play('', 0, 1, true);
 
@@ -81,6 +83,11 @@ Tank.prototype.update = function() {
   } else {
     this.tankEngineSound.volume = 0.3;
     this.animations.stop('moveWheels');
+  }
+
+  // autofire if tank has been charging too long
+  if (this.firing === true && (new Date()).getTime() - this.startFiring >= 5000) {
+    this.fire();
   }
 };
 
@@ -125,7 +132,13 @@ Tank.prototype.getVectorCannon = function() {
 };
 
 Tank.prototype.fire = function() {
+  // if already fired, return
+  if (!this.firing) {
+    return;
+  }
+  this.firing = false;
   this.crosshair.stopCharge();
+  this.tankChargingSound.stop();
   var bulletVelocity = this.getVectorCannon();
   var bullet = new Bullet(this.game, this.cannon.world.x + bulletVelocity.x * this.cannon.width, this.cannon.world.y - bulletVelocity.y * this.cannon.width );
   this.game.add.existing(bullet);
@@ -142,6 +155,7 @@ Tank.prototype.beforeFire = function() {
   this.firing = true;
   this.startFiring = (new Date()).getTime();
   this.crosshair.startCharge();
+  this.tankChargingSound.play('', 0, 0.5, false);
 };
 
 Tank.prototype.jump = function() {
@@ -153,11 +167,11 @@ Tank.prototype.jump = function() {
 
 Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations) {
   if(body) {
-    if(body.sprite.name == "enemy_bullet") {
+    if(body.sprite.name === 'enemy_bullet') {
       this.modifyHealth(-1);
       body.sprite.destroy();
     }
-    else if(body.sprite.name == "ground") {
+    else if(body.sprite.name === 'ground') {
       this.onGround = true;
     }
 
@@ -183,6 +197,9 @@ Tank.prototype.checkCollisionEnd = function(body, shapeA, shapeB) {
 };
 
 Tank.prototype.modifyHealth = function(amount) {
+  if(amount < 0 && (this.lastHit != null && ((new Date()).getTime() - this.lastHit) < this.invulnerablePeriod))
+    return;
+
   this.health += amount;
   var heart;
 
@@ -198,12 +215,12 @@ Tank.prototype.modifyHealth = function(amount) {
   }
 
   if(amount < 0) {
+    this.lastHit = (new Date()).getTime();
     this.damageTaken();
   }
-}
+};
 
 Tank.prototype.damageTaken = function() {
-  console.log("HERE")
   // Create the death particles
   if (this.health <= 0)
     {
@@ -224,6 +241,6 @@ Tank.prototype.damageTaken = function() {
       // Flash red when taking damage
       this.game.add.tween(this).to( {tint: 0xFF0000 }, 75, Phaser.Easing.Linear.None, true, 0, 0, true);
     }
-}
+};
 
 module.exports = Tank;
