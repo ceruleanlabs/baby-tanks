@@ -15,9 +15,9 @@ Preload.prototype = {
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
     this.load.setPreloadSprite(this.asset);
     this.load.image('baby-tank', 'assets/baby-tank.jpg');
-    this.load.spritesheet('bigTank', 'assets/bigtank_sheet.png', 100, 80, 2);
-    this.load.spritesheet('babyTank', 'assets/babytank_sheet.png', 100, 64, 2);
-    this.load.image('baby', 'assets/baby.png');
+    this.load.spritesheet('bigTank', 'assets/bigtank_sheet.png', 100, 80);
+    this.load.spritesheet('babyTank', 'assets/babytank_sheet.png', 100, 64);
+    this.load.spritesheet('babies', 'assets/babies_sheet.png', 20, 40);
     this.load.image('ground', 'assets/grass.png');
     this.load.image('enemy', 'assets/yoman.png');
     this.load.image('crosshair', 'assets/crosshair.png');
@@ -27,10 +27,11 @@ Preload.prototype = {
     this.load.spritesheet('explosion', 'assets/explosion_sheet.png', 12, 12, 3);
 
     this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
-    this.load.audio('backgroundMusic', 'assets/music.wav');
-    this.load.audio('tankPewPew', 'assets/tank_pewpew.mp3');
-    this.load.audio('tankEngine', 'assets/tank_enginesound.mp3');
-    this.load.audio('bulletSplode', 'assets/bullet_splosion.mp3');
+    this.load.audio('backgroundMusic', 'assets/sounds/background_music.m4a');
+    this.load.audio('tankPewPew', 'assets/sounds/tank_pewpew.mp3');
+    this.load.audio('tankEngine', 'assets/sounds/tank_enginesound.mp3');
+    this.load.audio('tankCharging', 'assets/sounds/tank_charging.m4a');
+    this.load.audio('bulletSplode', 'assets/sounds/bullet_splosion.mp3');
   },
   create: function() {
     this.asset.cropEnabled = false;

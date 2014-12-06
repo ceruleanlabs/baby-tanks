@@ -56,7 +56,7 @@ var Tank = function(game, x, y, frame) {
   this.animations.add('moveWheels');
 
   // baby
-  this.baby = new Phaser.Sprite(game, -40, -20, 'baby');
+  this.baby = new Phaser.Sprite(game, -40, -20, 'babies', 0);
   this.baby.anchor.setTo(0.5, 0.5);
   this.addChild(this.baby);
 
@@ -87,41 +87,42 @@ Tank.prototype.update = function() {
 Tank.prototype.updateMovement = function() {
   if (this.cursors.right.isDown || this.moveRightD.isDown) {
     this.scale.x = 1; // sets direction to the right
-    this.body.velocity.x = (this.body.world.mpx(this.body.velocity.x) * -1) + this.acceleration * (this.game.time.elapsed / 1000); 
+    this.body.velocity.x = (this.body.world.mpx(this.body.velocity.x) * -1) + this.acceleration * (this.game.time.elapsed / 1000);
   } else if (this.cursors.left.isDown || this.moveLeftA.isDown) {
     this.scale.x = -1; // sets direction to the left
-    this.body.velocity.x = (this.body.world.mpx(this.body.velocity.x) * -1) - this.acceleration * (this.game.time.elapsed / 1000); 
+    this.body.velocity.x = (this.body.world.mpx(this.body.velocity.x) * -1) - this.acceleration * (this.game.time.elapsed / 1000);
   }
 
   this.body.velocity.x = Phaser.Math.clamp(this.body.world.mpx(this.body.velocity.x) * -1, this.maxSpeed * -1, this.maxSpeed);
 };
 
 Tank.prototype.updateCannonRotation = function() {
-    if(this.crosshair != null) {
+    if(this.crosshair !== null) {
       // Get the angle between the tank and the crosshair
       var newAngle = Phaser.Math.angleBetweenPoints(this.position, this.crosshair.position); // Rad
 
       // The new angle of the cannon will be the previous angle - the rotation of the tank
       // This gives it the correct local rotation
       newAngle = newAngle - this.rotation;
-      newAngle = Phaser.Math.normalizeAngle(this.scale.x == 1 ? newAngle : Math.PI - newAngle);
+      newAngle = Phaser.Math.normalizeAngle(this.scale.x === 1 ? newAngle : Math.PI - newAngle);
 
       // Restrict the movement of the cannon
-      if(newAngle > Math.PI)
+      if(newAngle > Math.PI) {
         newAngle = Phaser.Math.clamp(newAngle, this.cannonAngleMin, Math.PI * 2);
-      else
+      } else {
         newAngle = Phaser.Math.clamp(newAngle, 0, this.cannonAngleMax);
+      }
 
       this.cannon.rotation = newAngle;
   }
 };
 
 Tank.prototype.getVectorCannon = function() {
-  var canRotation = Phaser.Math.normalizeAngle(this.rotation + (this.scale.x == 1 ? this.cannon.rotation : Math.PI - this.cannon.rotation ));
+  var canRotation = Phaser.Math.normalizeAngle(this.rotation + (this.scale.x === 1 ? this.cannon.rotation : Math.PI - this.cannon.rotation ));
   var x = Math.cos(canRotation) * this.cannon.width;
   var y = Math.sin(canRotation) * this.cannon.width * -1;
   return Phaser.Point.normalize(new Phaser.Point(x, y));
-}
+};
 
 Tank.prototype.fire = function() {
   this.crosshair.stopCharge();
@@ -152,7 +153,11 @@ Tank.prototype.jump = function() {
 
 Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations) {
   if(body) {
-    if(body.sprite.name == "ground") {
+    if(body.sprite.name == "enemy_bullet") {
+      this.modifyHealth(-1);
+      body.sprite.destroy();
+    }
+    else if(body.sprite.name == "ground") {
       this.onGround = true;
     }
 
@@ -164,7 +169,7 @@ Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations)
 
 Tank.prototype.checkCollisionEnd = function(body, shapeA, shapeB) {
   if(body) {
-    if(body.sprite.name == "ground") {
+    if(body.sprite.name === 'ground') {
       this.onGround = false;
     }
   }
@@ -172,18 +177,46 @@ Tank.prototype.checkCollisionEnd = function(body, shapeA, shapeB) {
 
 Tank.prototype.modifyHealth = function(amount) {
   this.health += amount;
+  var heart;
 
   while(this.health > this.hearts.length) {
-    var heart = this.game.add.sprite(10 + this.hearts.length * 64, 10, 'heart');
+    heart = this.game.add.sprite(10 + this.hearts.length * 64, 10, 'heart');
     heart.fixedToCamera = true;
     this.hearts.push(heart);
   }
 
   while(this.health < this.hearts.length && this.hearts.length >= 0) {
-    var heart = this.hearts.pop();
+    heart = this.hearts.pop();
     heart.destroy();
   }
 
+  if(amount < 0) {
+    this.damageTaken();
+  }
+}
+
+Tank.prototype.damageTaken = function() {
+  console.log("HERE")
+  // Create the death particles
+  if (this.health <= 0)
+    {
+      var emitter = this.game.add.emitter(this.x, this.y, 400);
+      emitter.width = this.width - 50;
+      emitter.height = this.height - 50;
+      emitter.makeParticles('explosion');
+      emitter.minParticleSpeed.set(-100, -300);
+      emitter.maxParticleSpeed.set(100, -100);
+      emitter.gravity = 300;
+      emitter.setRotation(-100, 100);
+      emitter.minParticleScale = 0.25;
+      emitter.maxParticleScale = 3;
+
+      emitter.start(true, 2000, null, 50);
+      this.destroy();
+    } else {
+      // Flash red when taking damage
+      this.game.add.tween(this).to( {tint: 0xFF0000 }, 75, Phaser.Easing.Linear.None, true, 0, 0, true);
+    }
 }
 
 module.exports = Tank;
