@@ -20,6 +20,7 @@ Preload.prototype = {
     this.load.spritesheet('babies', 'assets/babies_sheet.png', 20, 40);
     this.load.image('ground', 'assets/grass.png');
     this.load.spritesheet('bigEnemy', 'assets/bigevil_sheet.png', 160, 152);
+    this.load.spritesheet('smallEnemy', 'assets/smallevil_sheet.png', 100, 64);
     this.load.image('crosshair', 'assets/crosshair.png');
     this.load.image('cannon', 'assets/cannon.png');
     this.load.image('bullet', 'assets/bullet.png');

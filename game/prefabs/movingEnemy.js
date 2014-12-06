@@ -1,7 +1,7 @@
 'use strict';
 var MovingEnemy = function(game, x, y, moveDistance, moveSpeed, invincible, frame) {
   // The super call to Phaser.Sprite
-  Phaser.Sprite.call(this, game, x, y, 'bigEnemy', frame);
+  Phaser.Sprite.call(this, game, x, y, 'smallEnemy', frame);
   this.name = 'enemy';
   this.anchor.setTo(0.5, 0.5);
 
@@ -19,7 +19,7 @@ var MovingEnemy = function(game, x, y, moveDistance, moveSpeed, invincible, fram
   this.acceleration = 400; // px / second
   this.maxSpeed = 400; // px / second
   this.moveSpeed = moveSpeed || 300;
-  this.scale.x = 1; // starts facing player
+  this.scale.x = -1; // starts facing player
   this.changeTime = 2; // changes directions every three seconds
   this.startingX = x;
   this.moveDistance = moveDistance || 100;
@@ -33,7 +33,7 @@ MovingEnemy.prototype = Object.create(Phaser.Sprite.prototype);
 MovingEnemy.prototype.constructor = MovingEnemy;
 
 MovingEnemy.prototype.update = function() {
-  this.updateMovement(-this.scale.x);
+  this.updateMovement(this.scale.x);
 
   if (this.body.velocity.x > 0.5 || this.body.velocity.x < -0.5) {
     this.animations.play('moveMouth', 10, true);
@@ -92,9 +92,9 @@ MovingEnemy.prototype.updateMovement = function(direction) {
   this.body.velocity.x = this.moveSpeed * direction;
 
   if ( this.x <= this.startingX - this.moveDistance ) {
-    this.scale.x = -1;
-  } else if ( this.x >= this.startingX + this.moveDistance ) {
     this.scale.x = 1;
+  } else if ( this.x >= this.startingX + this.moveDistance ) {
+    this.scale.x = -1;
   }
 
 };
