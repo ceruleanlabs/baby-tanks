@@ -3,6 +3,7 @@
 ## Setup
 
     $ npm install
+    $ npm install -g grunt grunt-cli
 
 ## Development
 
