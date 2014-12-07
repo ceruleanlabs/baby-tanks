@@ -52,7 +52,7 @@ Castle.prototype.demolish = function() {
   var emitter = this.game.add.emitter(this.x, this.y, 400);
   emitter.width = this.width - 50;
   emitter.height = this.height - 50;
-  emitter.makeParticles('smoke');
+  emitter.makeParticles('smoke', [0, 1, 2, 3]);
   emitter.setAlpha(0.3, 0.8);
   emitter.minParticleSpeed.set(0, 0);
   emitter.minParticleSpeed.set(-74, -200);
@@ -70,7 +70,7 @@ Castle.prototype.blowupStage1 = function() {
   var emitter = this.game.add.emitter(this.x, this.y, 400);
   emitter.width = this.width - 50;
   emitter.height = this.height - 50;
-  emitter.makeParticles('bricksplosion', 3);
+  emitter.makeParticles('bricksplosion', [0, 1, 2, 3]);
   emitter.minParticleSpeed.set(-100, -300);
   emitter.maxParticleSpeed.set(100, -100);
   emitter.gravity = 300;

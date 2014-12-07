@@ -49,6 +49,11 @@ Play.prototype = {
     //this.tank.body.setCollisionGroup(this.entityCG);
     this.game.add.existing(this.tank);
 
+    // Create the crosshair
+    this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
+    this.game.add.existing(this.crosshair);
+    this.tank.crosshair = this.crosshair;
+
     // Create/add a enemy
 
     // this.enemy = new Enemy(this.game, 600, 300);
@@ -76,11 +81,6 @@ Play.prototype = {
     this.castle = new Castle(this.game, 2700, 330);
     this.game.add.existing(this.castle);
 
-    // Create the crosshair
-    this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
-    this.game.add.existing(this.crosshair);
-    this.tank.crosshair = this.crosshair;
-
     // Camera
     this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
 
@@ -91,14 +91,14 @@ Play.prototype = {
     this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
   },
   update: function() {
-    if(this.tank.health <= 0) {
+    if(this.tank.health <= 0 || this.tank.position.y > 1000) {
       this.end_timer = this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
         this.game.state.start('next_level', true, false, 1, 1, false);
       }, this);
     }
 
     if(this.castle.destroyed) {
-      //if(this.end_timer != null) this.end_timer.destroy();
+      if(this.end_timer != null) this.end_timer.destroy();
 
       this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
         this.game.state.start('next_level', true, false, 1, 2, true);

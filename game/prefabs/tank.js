@@ -224,7 +224,7 @@ Tank.prototype.damageTaken = function() {
       var emitter = this.game.add.emitter(this.x, this.y, 400);
       emitter.width = this.width - 50;
       emitter.height = this.height - 50;
-      emitter.makeParticles('explosion', 3);
+      emitter.makeParticles('explosion', [0, 1, 2]);
       emitter.minParticleSpeed.set(-100, -300);
       emitter.maxParticleSpeed.set(100, -100);
       emitter.gravity = 300;
