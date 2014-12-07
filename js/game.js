@@ -395,7 +395,7 @@ MovingEnemy.prototype.update = function() {
 
 MovingEnemy.prototype.decreaseHealth = function(amount, impactVelocity) {
   amount = amount || this.health;
-  console.log(impactVelocity);
+  // console.log(impactVelocity);
   impactVelocity = impactVelocity || {x:300, y:500};
 
   this.health -= amount;
@@ -632,6 +632,13 @@ Tank.prototype.update = function() {
   this.updateMovement();
   this.updateCannonRotation();
 
+  // right tank if it begins to rotate too far
+  if (this.rotation > 0.7 || this.rotation < -0.7) {
+    this.body.setZeroRotation();
+  } else if (this.rotation <= 0.7 && this.rotation >= -0.7) {
+    this.rotation *= -5;
+  }
+
   // UPDATE ANIMATION AND SOUND
   // make engine louder and animate when tank is moving
   if (this.body.velocity.x > 0.5 || this.body.velocity.x < -0.5) {
@@ -731,8 +738,8 @@ Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations)
     else if(body.sprite.name === 'ground') {
       this.onGround = true;
     }
-    else if(body.sprite.name == "enemy") {
-      console.log('BAM!')
+    else if(body.sprite.name === 'enemy') {
+      console.log('BAM!');
     }
     else if(body.sprite.name === 'health') {
       this.modifyHealth(body.sprite.amount);
@@ -980,7 +987,6 @@ var Castle    = require('../prefabs/castle');
 function Play() {}
 Play.prototype = {
   create: function() {
-console.log('fuck')
     // Setup gravity
     this.game.physics.startSystem(Phaser.Physics.P2JS);
     this.game.physics.p2.gravity.y = 1200;
