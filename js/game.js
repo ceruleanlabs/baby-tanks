@@ -8,14 +8,17 @@ window.onload = function () {
   // Game States
   game.state.add('boot', require('./states/boot'));
   game.state.add('gameover', require('./states/gameover'));
+  game.state.add('level1_1', require('./states/level1_1'));
+  game.state.add('level1_2', require('./states/level1_2'));
   game.state.add('menu', require('./states/menu'));
+  game.state.add('next_level', require('./states/next_level'));
   game.state.add('play', require('./states/play'));
   game.state.add('preload', require('./states/preload'));
   
 
   game.state.start('boot');
 };
-},{"./states/boot":11,"./states/gameover":12,"./states/menu":13,"./states/play":14,"./states/preload":15}],2:[function(require,module,exports){
+},{"./states/boot":12,"./states/gameover":13,"./states/level1_1":14,"./states/level1_2":15,"./states/menu":16,"./states/next_level":17,"./states/play":18,"./states/preload":19}],2:[function(require,module,exports){
 'use strict';
 
 var Bullet = function(game, x, y, frame) {
@@ -50,6 +53,92 @@ Bullet.prototype.fire = function(x, y) {
 module.exports = Bullet;
 
 },{}],3:[function(require,module,exports){
+'use strict';
+
+var Castle = function(game, x, y, frame) {
+  // The super call to Phaser.Sprite
+  Phaser.Sprite.call(this, game, x, y, 'castle', 0);
+  this.name = "castle";
+  this.health = 2;
+
+  // set the sprite's anchor to the center
+  this.anchor.setTo(0.5, 0.5);
+
+  // enable gravity
+  this.game.physics.p2.enableBody(this);
+  this.body.data.gravityScale = 0;
+  this.body.static = true;
+  this.destroyed = false;
+  this.collissionMagnitude = 60;
+
+  this.body.onBeginContact.add(this.checkCollision, this);
+};
+
+Castle.prototype = Object.create(Phaser.Sprite.prototype);
+Castle.prototype.constructor = Castle;
+
+Castle.prototype.update = function() {};
+
+Castle.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations) {
+  if(body) {
+    if(body.sprite.name === 'bullet') {
+      if((new Phaser.Point(body.velocity.x, body.velocity.y)).getMagnitude() > this.collissionMagnitude) {
+        if(this.frame == 0) {
+          this.damage();
+        } else {
+          this.demolish();
+          this.destroyed = true;
+          this.destroy();
+        }
+        body.sprite.destroy();
+      }
+    }
+  }
+};
+
+Castle.prototype.damage = function() {
+  this.frame = 1;
+  this.blowupStage1();
+}
+
+Castle.prototype.demolish = function() {
+  this.blowupStage1();
+
+  var emitter = this.game.add.emitter(this.x, this.y, 400);
+  emitter.width = this.width - 50;
+  emitter.height = this.height - 50;
+  emitter.makeParticles('smoke');
+  emitter.setAlpha(0.3, 0.8);
+  emitter.minParticleSpeed.set(0, 0);
+  emitter.minParticleSpeed.set(-74, -200);
+  emitter.maxParticleSpeed.set(100, -100);
+  emitter.gravity = 50;
+  emitter.setRotation(-100, 100);
+  emitter.minParticleScale = 0.25;
+  emitter.maxParticleScale = 5;
+
+  this.game.add.tween(emitter).to( { alpha: 0 }, 4000, Phaser.Easing.Back.InOut, true, 0, Number.MAX_VALUE, true);
+  emitter.start(true, 4000, null, 50);
+}
+
+Castle.prototype.blowupStage1 = function() {
+  var emitter = this.game.add.emitter(this.x, this.y, 400);
+  emitter.width = this.width - 50;
+  emitter.height = this.height - 50;
+  emitter.makeParticles('bricksplosion', 3);
+  emitter.minParticleSpeed.set(-100, -300);
+  emitter.maxParticleSpeed.set(100, -100);
+  emitter.gravity = 300;
+  emitter.setRotation(-100, 100);
+  emitter.minParticleScale = 0.25;
+  emitter.maxParticleScale = 1;
+
+  emitter.start(true, 2000, null, 50);
+}
+
+module.exports = Castle;
+
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var Crosshair = function(game, x, y, frame) {
@@ -93,7 +182,7 @@ Crosshair.prototype.stopCharge = function() {
 
 module.exports = Crosshair;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var Enemy = function(game, x, y, frame) {
@@ -158,7 +247,7 @@ Enemy.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations
 
 module.exports = Enemy;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var EnemyBullet = function(game, x, y, frame) {
@@ -193,7 +282,7 @@ EnemyBullet.prototype.fire = function(x, y) {
 
 module.exports = EnemyBullet;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 var Ground = function(game, x, y, width, height) {
@@ -221,7 +310,7 @@ Ground.prototype.update = function() {
 
 module.exports = Ground;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 var HealthPickup = function(game, x, y, amount, frame) {
@@ -259,11 +348,11 @@ HealthPickup.prototype.checkCollision = function(body, shapeA, shapeB, contactEq
 
 module.exports = HealthPickup;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 var MovingEnemy = function(game, x, y, moveDistance, moveSpeed, invincible, frame) {
   // The super call to Phaser.Sprite
-  Phaser.Sprite.call(this, game, x, y, 'bigEnemy', frame);
+  Phaser.Sprite.call(this, game, x, y, 'smallEnemy', frame);
   this.name = 'enemy';
   this.anchor.setTo(0.5, 0.5);
 
@@ -281,7 +370,7 @@ var MovingEnemy = function(game, x, y, moveDistance, moveSpeed, invincible, fram
   this.acceleration = 400; // px / second
   this.maxSpeed = 400; // px / second
   this.moveSpeed = moveSpeed || 300;
-  this.scale.x = 1; // starts facing player
+  this.scale.x = -1; // starts facing player
   this.changeTime = 2; // changes directions every three seconds
   this.startingX = x;
   this.moveDistance = moveDistance || 100;
@@ -295,7 +384,7 @@ MovingEnemy.prototype = Object.create(Phaser.Sprite.prototype);
 MovingEnemy.prototype.constructor = MovingEnemy;
 
 MovingEnemy.prototype.update = function() {
-  this.updateMovement(-this.scale.x);
+  this.updateMovement(this.scale.x);
 
   if (this.body.velocity.x > 0.5 || this.body.velocity.x < -0.5) {
     this.animations.play('moveMouth', 10, true);
@@ -316,7 +405,7 @@ MovingEnemy.prototype.decreaseHealth = function(amount, impactVelocity) {
     var emitter = this.game.add.emitter(this.x, this.y, 400);
     emitter.width = this.width - 50;
     emitter.height = this.height - 50;
-    emitter.makeParticles('explosion');
+    emitter.makeParticles('explosion', 3);
     emitter.minParticleSpeed.set(0, 0);
     emitter.maxParticleSpeed.set(10 * impactVelocity.x * -1, 1 * impactVelocity.y);
     emitter.gravity = 300;
@@ -354,9 +443,9 @@ MovingEnemy.prototype.updateMovement = function(direction) {
   this.body.velocity.x = this.moveSpeed * direction;
 
   if ( this.x <= this.startingX - this.moveDistance ) {
-    this.scale.x = -1;
-  } else if ( this.x >= this.startingX + this.moveDistance ) {
     this.scale.x = 1;
+  } else if ( this.x >= this.startingX + this.moveDistance ) {
+    this.scale.x = -1;
   }
 
 };
@@ -365,19 +454,19 @@ MovingEnemy.prototype.updateMovement = function(direction) {
 
 module.exports = MovingEnemy;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 var EnemyBullet = require('../prefabs/enemy_bullet');
 
 var StationaryShooter = function(game, x, y, health, reloadSpeed, detectDistance, frame) {
   // The super call to Phaser.Sprite
-  Phaser.Sprite.call(this, game, x, y, 'enemy', frame);
+  Phaser.Sprite.call(this, game, x, y, 'big_evil', 2);
   this.anchor.setTo(0.5, 0.5);
 
   // enable gravity
   this.game.physics.p2.enableBody(this);
   this.body.mass = 3;
-  this.health = health || 10;
+  this.health = health || 20;
 
   // Magnitude of hits required to damage this entity
   this.collissionMagnitude = 30;
@@ -426,6 +515,7 @@ StationaryShooter.prototype.tryShooting = function() {
 }
 
 StationaryShooter.prototype.decreaseHealth = function(amount, impactVelocity) {
+  console.log(this.health - amount);
   this.health -= amount;
 
   // Create the death particles
@@ -464,7 +554,7 @@ StationaryShooter.prototype.checkCollision = function(body, shapeA, shapeB, cont
 
 module.exports = StationaryShooter;
 
-},{"../prefabs/enemy_bullet":5}],10:[function(require,module,exports){
+},{"../prefabs/enemy_bullet":6}],11:[function(require,module,exports){
 'use strict';
 
 var Bullet = require('../prefabs/bullet');
@@ -622,7 +712,7 @@ Tank.prototype.beforeFire = function() {
   this.firing = true;
   this.startFiring = (new Date()).getTime();
   this.crosshair.startCharge();
-  this.tankChargingSound.play('', 0, 0.5, false);
+  this.tankChargingSound.play('', 0, 0.07, false);
 };
 
 Tank.prototype.jump = function() {
@@ -641,12 +731,10 @@ Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations)
     else if(body.sprite.name === 'ground') {
       this.onGround = true;
     }
-
-    if(body.sprite.name == "enemy") {
+    else if(body.sprite.name == "enemy") {
       console.log('BAM!')
     }
-
-    if(body.sprite.name === 'health') {
+    else if(body.sprite.name === 'health') {
       this.modifyHealth(body.sprite.amount);
       body.sprite.destroy();
     }
@@ -654,18 +742,17 @@ Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations)
 };
 
 Tank.prototype.checkCollisionEnd = function(body, shapeA, shapeB) {
-  if(body) {
+  if(body && body.sprite) {
     if(body.sprite.name === 'ground') {
       this.onGround = false;
     }
-
-
   }
 };
 
 Tank.prototype.modifyHealth = function(amount) {
-  if(amount < 0 && (this.lastHit != null && ((new Date()).getTime() - this.lastHit) < this.invulnerablePeriod))
+  if(amount < 0 && (this.lastHit !== null && ((new Date()).getTime() - this.lastHit) < this.invulnerablePeriod)) {
     return;
+  }
 
   this.health += amount;
   var heart;
@@ -694,7 +781,7 @@ Tank.prototype.damageTaken = function() {
       var emitter = this.game.add.emitter(this.x, this.y, 400);
       emitter.width = this.width - 50;
       emitter.height = this.height - 50;
-      emitter.makeParticles('explosion');
+      emitter.makeParticles('explosion', 3);
       emitter.minParticleSpeed.set(-100, -300);
       emitter.maxParticleSpeed.set(100, -100);
       emitter.gravity = 300;
@@ -712,7 +799,7 @@ Tank.prototype.damageTaken = function() {
 
 module.exports = Tank;
 
-},{"../prefabs/bullet":2}],11:[function(require,module,exports){
+},{"../prefabs/bullet":2}],12:[function(require,module,exports){
 
 'use strict';
 
@@ -731,7 +818,7 @@ Boot.prototype = {
 
 module.exports = Boot;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
 'use strict';
 function GameOver() {}
@@ -763,41 +850,121 @@ GameOver.prototype = {
 };
 module.exports = GameOver;
 
-},{}],13:[function(require,module,exports){
-
+},{}],14:[function(require,module,exports){
 'use strict';
-function Menu() {}
 
-Menu.prototype = {
-  preload: function() {
+var Ground    = require('../prefabs/ground');
+var Tank      = require('../prefabs/tank');
+var Crosshair = require('../prefabs/crosshair');
+var Enemy     = require('../prefabs/enemy');
+var MovingEnemy     = require('../prefabs/movingEnemy');
+var StationaryShooter     = require('../prefabs/stationary_shooter');
+var HealthPickup     = require('../prefabs/health_pickup');
+var Castle    = require('../prefabs/castle');
 
-  },
+function Play() {}
+Play.prototype = {
   create: function() {
-    var style = { font: '65px Arial', fill: 'red', align: 'center'};
-    this.sprite = this.game.add.sprite(this.game.world.centerX, 200, 'baby-tank');
-    this.sprite.anchor.setTo(0.5, 0.5);
 
-    this.titleText = this.game.add.bitmapText(this.game.world.centerX - 325, 200, 'babyFont', 'BABY TANKS', 72);
+    // Setup gravity
+    this.game.physics.startSystem(Phaser.Physics.P2JS);
+    this.game.physics.p2.gravity.y = 1200;
+    this.game.physics.p2.restitution = 0.3;
+    this.game.physics.p2.friction = 0.3;
+    //this.game.physics.p2.setImpactEvents(true);
 
-    this.instructionsText = this.game.add.bitmapText(this.game.world.centerX, 400, 'babyFont', 'Click anywhere to play "BABY TANKS"', 16);
+    // Set up collision groups
+    this.playerCG = this.game.physics.p2.createCollisionGroup();
+    this.environmentCG = this.game.physics.p2.createCollisionGroup();
+    this.enemyCG = this.game.physics.p2.createCollisionGroup();
 
-    this.sprite.angle = -20;
-    this.game.add.tween(this.sprite).to({angle: 20}, 500, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
+    // background
+    this.background = this.game.add.tileSprite(0, 0, 5000, 500, 'background');
+    this.flowers = this.game.add.sprite(0, this.game.height - 120, 'flowers');
 
-    // music
-    this.music = this.game.add.audio('backgroundMusic', 1, true);
-    this.music.play('', 0, 1, true);
+    // Create/add the ground
+    this.ground1 = new Ground(this.game, 0, 500, 1500, 40);
+    this.ground2 = new Ground(this.game, 950, 500, 450, 100);
+    this.ground3 = new Ground(this.game, 1800, 500, 900, 30);
+    this.ground4 = new Ground(this.game, 3000, 500, 1500, 40);
+    // this.ground5 = new Ground(this.game, 750, 500, 500, 60);
+    // this.ground6 = new Ground(this.game, 750, 500, 500, 60);
+    // this.ground7 = new Ground(this.game, 750, 500, 500, 60);
+    // this.ground8 = new Ground(this.game, 750, 500, 500, 60);
+    this.game.add.existing(this.ground1);
+    this.game.add.existing(this.ground2);
+    this.game.add.existing(this.ground3);
+    this.game.add.existing(this.ground4);
+    //this.ground.body.setCollisionGroup(this.groundCG);
+
+    // Create the tank
+    this.tank = new Tank(this.game, this.game.width/8, this.game.height/2);
+    //this.tank.body.setCollisionGroup(this.entityCG);
+    this.game.add.existing(this.tank);
+
+    // Create/add a enemy
+
+    // this.enemy = new Enemy(this.game, 600, 300);
+    // this.game.add.existing(this.enemy);
+
+    //moving enemy
+    this.movingEnemy = new MovingEnemy(this.game, 500, 300, 75);
+    this.game.add.existing(this.movingEnemy);
+    this.movingEnemy = new MovingEnemy(this.game, 900, 300, 200);
+    this.game.add.existing(this.movingEnemy);
+    this.movingEnemy = new MovingEnemy(this.game, 1600, 300, 200);
+    this.game.add.existing(this.movingEnemy);
+    this.movingEnemy = new MovingEnemy(this.game, 1800, 300, 200, 400);
+    this.game.add.existing(this.movingEnemy);
+    this.movingEnemy = new MovingEnemy(this.game, 1950, 300, 200,500);
+    this.game.add.existing(this.movingEnemy);
+    this.movingEnemy = new MovingEnemy(this.game, 2200, 300, 200);
+    this.game.add.existing(this.movingEnemy);
+
+    //health
+    // this.healthPickup = new HealthPickup(this.game, 400, 300,1);
+    // this.game.add.existing(this.healthPickup);
+    // this.game.debug(this.healthPickup.sprite);
+
+    this.castle = new Castle(this.game, 2700, 330);
+    this.game.add.existing(this.castle);
+
+    // Create the crosshair
+    this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
+    this.game.add.existing(this.crosshair);
+    this.tank.crosshair = this.crosshair;
+
+    // Camera
+    this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
+
+    // World bounds
+    this.game.world.setBounds(0, 0, 5000, 500);
+
+    // Capture the spacebar key so the page doesn't scroll
+    this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
   },
   update: function() {
-    if(this.game.input.activePointer.justPressed()) {
-      this.game.state.start('play');
+    if(this.tank.health <= 0) {
+      this.end_timer = this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
+        this.game.state.start('next_level', true, false, 1, 1, false);
+      }, this);
+    }
+
+    if(this.castle.destroyed) {
+      //if(this.end_timer != null) this.end_timer.destroy();
+
+      this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
+        this.game.state.start('next_level', true, false, 1, 2, true);
+      }, this);
     }
   }
 };
 
-module.exports = Menu;
 
-},{}],14:[function(require,module,exports){
+
+module.exports = Play;
+
+},{"../prefabs/castle":3,"../prefabs/crosshair":4,"../prefabs/enemy":5,"../prefabs/ground":7,"../prefabs/health_pickup":8,"../prefabs/movingEnemy":9,"../prefabs/stationary_shooter":10,"../prefabs/tank":11}],15:[function(require,module,exports){
 'use strict';
 
 var Ground    = require('../prefabs/ground');
@@ -852,6 +1019,10 @@ Play.prototype = {
     //moving enemy
     this.movingEnemy = new MovingEnemy(this.game, 800, 300, 200);
     this.game.add.existing(this.movingEnemy);
+    this.movingEnemy = new MovingEnemy(this.game, 1200, 300, 200);
+    this.game.add.existing(this.movingEnemy);    
+    this.movingEnemy = new MovingEnemy(this.game, 1600, 300, 200);
+    this.game.add.existing(this.movingEnemy);
 
     //health
     this.healthPickup = new HealthPickup(this.game, 400, 300,1);
@@ -870,18 +1041,180 @@ Play.prototype = {
   update: function() {
     if(this.tank.health <= 0) {
       this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
-        this.game.state.start('gameover', true, false, false);
+        this.game.state.start('next_level', 1, 1, true);
       }, this);
 
     }
-    if(this.tank.world.x > 4500)
-      this.game.state.start('gameover', true, false, true);
+    if(this.tank.world.x > 4500) {
+      this.game.state.start('next_level', 1, 2, true);
+    }
   }
 };
 
 module.exports = Play;
 
-},{"../prefabs/crosshair":3,"../prefabs/enemy":4,"../prefabs/ground":6,"../prefabs/health_pickup":7,"../prefabs/movingEnemy":8,"../prefabs/stationary_shooter":9,"../prefabs/tank":10}],15:[function(require,module,exports){
+},{"../prefabs/crosshair":4,"../prefabs/enemy":5,"../prefabs/ground":7,"../prefabs/health_pickup":8,"../prefabs/movingEnemy":9,"../prefabs/stationary_shooter":10,"../prefabs/tank":11}],16:[function(require,module,exports){
+
+'use strict';
+function Menu() {}
+
+Menu.prototype = {
+  preload: function() {
+
+  },
+  create: function() {
+    var style = { font: '65px Arial', fill: 'red', align: 'center'};
+    this.sprite = this.game.add.sprite(this.game.world.centerX, 200, 'baby-tank');
+    this.sprite.anchor.setTo(0.5, 0.5);
+
+    this.titleText = this.game.add.bitmapText(this.game.world.centerX - 325, 200, 'babyFont', 'BABY TANKS', 72);
+
+    this.instructionsText = this.game.add.bitmapText(this.game.world.centerX, 400, 'babyFont', 'Click anywhere to play "BABY TANKS"', 16);
+
+    this.sprite.angle = -20;
+    this.game.add.tween(this.sprite).to({angle: 20}, 500, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
+
+    // music
+    this.music = this.game.add.audio('backgroundMusic', 1, true);
+    this.music.play('', 0, 1, true);
+  },
+  update: function() {
+    if(this.game.input.activePointer.justPressed()) {
+      this.game.state.start('next_level',true, false, 1,1,true);
+    }
+  }
+};
+
+module.exports = Menu;
+
+},{}],17:[function(require,module,exports){
+'use strict';
+
+function NextLevel() {}
+
+NextLevel.prototype = {
+  init: function(level, subLevel, won) {
+    this.nextLevel = level || 1;
+    this.nextSubLevel = subLevel || 1;
+    this.won = won || false;
+  },
+
+  preload: function() {
+
+  },
+
+  create: function () {
+    this.text = this.won ? 'Click anywhere to play level'+this.nextLevel+'-'+this.nextSubLevel : 'You lost :( \n Click anywhere to replay level';
+    this.titleText = this.game.add.bitmapText(this.game.camera.width / 2 - 300, this.game.camera.height / 2, 'babyFont', 'LEVEL '+this.nextLevel+'-'+this.nextSubLevel, 45);
+    this.titleText.fixedToCamera = false;
+
+    this.instructionsText = this.game.add.bitmapText(this.game.camera.width / 2 - 300, this.game.camera.height / 2 + 100, 'babyFont', this.text, 22);
+  },
+
+
+  update: function() {
+    if (this.game.input.activePointer.justPressed()) {
+      this.game.state.start('level'+ this.nextLevel+'_'+this.nextSubLevel);
+    }
+  }
+};
+
+module.exports = NextLevel;
+
+},{}],18:[function(require,module,exports){
+'use strict';
+
+var Ground    = require('../prefabs/ground');
+var Tank      = require('../prefabs/tank');
+var Crosshair = require('../prefabs/crosshair');
+var Enemy     = require('../prefabs/enemy');
+var MovingEnemy     = require('../prefabs/movingEnemy');
+var StationaryShooter     = require('../prefabs/stationary_shooter');
+var HealthPickup     = require('../prefabs/health_pickup');
+var Castle    = require('../prefabs/castle');
+
+function Play() {}
+Play.prototype = {
+  create: function() {
+
+    // Setup gravity
+    this.game.physics.startSystem(Phaser.Physics.P2JS);
+    this.game.physics.p2.gravity.y = 1200;
+    this.game.physics.p2.restitution = 0.3;
+    this.game.physics.p2.friction = 0.3;
+    //this.game.physics.p2.setImpactEvents(true);
+
+    // Set up collision groups
+    this.playerCG = this.game.physics.p2.createCollisionGroup();
+    this.environmentCG = this.game.physics.p2.createCollisionGroup();
+    this.enemyCG = this.game.physics.p2.createCollisionGroup();
+
+    // background
+    this.background = this.game.add.tileSprite(0, 0, 5000, 500, 'background');
+    this.flowers = this.game.add.sprite(0, this.game.height - 120, 'flowers');
+
+    // Create/add the ground
+    this.ground = new Ground(this.game, 0, 500, 10000, 40);
+    this.game.add.existing(this.ground);
+    //this.ground.body.setCollisionGroup(this.groundCG);
+
+    // Create the tank
+    this.tank = new Tank(this.game, this.game.width/8, this.game.height/2);
+    //this.tank.body.setCollisionGroup(this.entityCG);
+    this.game.add.existing(this.tank);
+
+    // Create the crosshair
+    this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
+    this.game.add.existing(this.crosshair);
+    this.tank.crosshair = this.crosshair;
+
+    // Create/add a enemy
+
+    // this.enemy = new Enemy(this.game, 600, 300);
+    // this.game.add.existing(this.enemy);
+
+    //moving enemy
+    // this.movingEnemy = new MovingEnemy(this.game, 800, 300, 200);
+    // this.game.add.existing(this.movingEnemy);
+
+    this.healthPickup = new HealthPickup(this.game, 400, 300,1);
+    this.game.add.existing(this.healthPickup);
+
+    // var stationaryEnemy = new StationaryShooter(this.game, 1200, 300);
+    // stationaryEnemy.target = this.tank;
+    // this.game.add.existing(stationaryEnemy);
+
+    // var wall = this.game.add.sprite(300, 250, 'brickWall');
+    // this.game.physics.p2.enable(wall);
+    // wall.body.mass = 10;
+
+    this.castle = new Castle(this.game, 900, 330);
+    this.game.add.existing(this.castle);
+
+    // Camera
+    this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
+
+    // World bounds
+    this.game.world.setBounds(0, 0, 5000, 500);
+
+    // Capture the spacebar key so the page doesn't scroll
+    this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
+  },
+  update: function() {
+    if(this.tank.health <= 0) {
+      this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
+        this.game.state.start('gameover', true, false, false);
+      }, this);
+
+    }
+    if(this.tank.world.x > 4500)
+      this.game.state.start('level_manager', true, false, true);
+  }
+};
+
+module.exports = Play;
+
+},{"../prefabs/castle":3,"../prefabs/crosshair":4,"../prefabs/enemy":5,"../prefabs/ground":7,"../prefabs/health_pickup":8,"../prefabs/movingEnemy":9,"../prefabs/stationary_shooter":10,"../prefabs/tank":11}],19:[function(require,module,exports){
 'use strict';
 
 function Preload() {
@@ -904,11 +1237,17 @@ Preload.prototype = {
     this.load.spritesheet('babies', 'assets/babies_sheet.png', 20, 40);
     this.load.image('ground', 'assets/grass.png');
     this.load.spritesheet('bigEnemy', 'assets/bigevil_sheet.png', 160, 152);
+    this.load.spritesheet('smallEnemy', 'assets/smallevil_sheet.png', 100, 64);
     this.load.image('crosshair', 'assets/crosshair.png');
     this.load.image('cannon', 'assets/cannon.png');
     this.load.image('bullet', 'assets/bullet.png');
     this.load.image('heart', 'assets/heart.png');
+    this.load.image('brickWall', 'assets/brick_wall.png');
+    this.load.spritesheet('smoke', 'assets/smoke_sheet.png', 16, 16);
+    this.load.spritesheet('castle', 'assets/castle.png', 300, 300);
     this.load.spritesheet('explosion', 'assets/explosion_sheet.png', 12, 12, 3);
+    this.load.spritesheet('bricksplosion', 'assets/brick_explosion_sheet.png', 24, 24, 4);
+    this.load.spritesheet('big_evil', 'assets/bigevil_sheet.png', 160, 152, 4);
 
     this.load.bitmapFont('babyFont', 'assets/fonts/babyFont/font.png', 'assets/fonts/babyFont/font.fnt');
     this.load.audio('backgroundMusic', 'assets/sounds/background_music.m4a');
