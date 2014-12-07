@@ -11,6 +11,13 @@
 
 ## Deploying to GitHub Pages
 
+First make sure you have gh-pages locally.
+
+    $ git checkout gh-pages
+    $ git checkout master
+
+Then deploy.
+
     $ grunt gh-pages
 
 ## Sounds Used
