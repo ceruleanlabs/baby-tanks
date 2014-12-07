@@ -13,7 +13,6 @@ var Castle    = require('../prefabs/castle');
 function Play() {}
 Play.prototype = {
   create: function() {
-console.log('fuck')
     // Setup gravity
     this.game.physics.startSystem(Phaser.Physics.P2JS);
     this.game.physics.p2.gravity.y = 1200;

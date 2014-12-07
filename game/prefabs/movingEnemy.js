@@ -44,7 +44,7 @@ MovingEnemy.prototype.update = function() {
 
 MovingEnemy.prototype.decreaseHealth = function(amount, impactVelocity) {
   amount = amount || this.health;
-  console.log(impactVelocity);
+  // console.log(impactVelocity);
   impactVelocity = impactVelocity || {x:300, y:500};
 
   this.health -= amount;
