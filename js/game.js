@@ -107,7 +107,7 @@ Castle.prototype.demolish = function() {
   var emitter = this.game.add.emitter(this.x, this.y, 400);
   emitter.width = this.width - 50;
   emitter.height = this.height - 50;
-  emitter.makeParticles('smoke');
+  emitter.makeParticles('smoke', [0, 1, 2, 3]);
   emitter.setAlpha(0.3, 0.8);
   emitter.minParticleSpeed.set(0, 0);
   emitter.minParticleSpeed.set(-74, -200);
@@ -125,7 +125,7 @@ Castle.prototype.blowupStage1 = function() {
   var emitter = this.game.add.emitter(this.x, this.y, 400);
   emitter.width = this.width - 50;
   emitter.height = this.height - 50;
-  emitter.makeParticles('bricksplosion', 3);
+  emitter.makeParticles('bricksplosion', [0, 1, 2, 3]);
   emitter.minParticleSpeed.set(-100, -300);
   emitter.maxParticleSpeed.set(100, -100);
   emitter.gravity = 300;
@@ -405,7 +405,7 @@ MovingEnemy.prototype.decreaseHealth = function(amount, impactVelocity) {
     var emitter = this.game.add.emitter(this.x, this.y, 400);
     emitter.width = this.width - 50;
     emitter.height = this.height - 50;
-    emitter.makeParticles('explosion', 3);
+    emitter.makeParticles('explosion', [0, 1, 2]);
     emitter.minParticleSpeed.set(0, 0);
     emitter.maxParticleSpeed.set(10 * impactVelocity.x * -1, 1 * impactVelocity.y);
     emitter.gravity = 300;
@@ -416,8 +416,8 @@ MovingEnemy.prototype.decreaseHealth = function(amount, impactVelocity) {
     emitter.start(true, 2000, null, 50);
     this.destroy();
   } else {
-    // Flash red when taking damage
-    this.game.add.tween(this).to( {tint: 0xFF0000 }, 75, Phaser.Easing.Linear.None, true, 0, 0, true);
+    // Flash black when taking damage
+    this.game.add.tween(this).to( {tint: 0x000000 }, 100, Phaser.Easing.Linear.None, true, 0, 0, true);
   }
 };
 
@@ -524,7 +524,7 @@ StationaryShooter.prototype.decreaseHealth = function(amount, impactVelocity) {
     var emitter = this.game.add.emitter(this.x, this.y, 400);
     emitter.width = this.width - 50;
     emitter.height = this.height - 50;
-    emitter.makeParticles('explosion');
+    emitter.makeParticles('explosion', [0, 1, 2]);
     emitter.minParticleSpeed.set(0, 0);
     emitter.maxParticleSpeed.set(10 * impactVelocity.x * -1, 1 * impactVelocity.y);
     emitter.gravity = 300;
@@ -781,7 +781,7 @@ Tank.prototype.damageTaken = function() {
       var emitter = this.game.add.emitter(this.x, this.y, 400);
       emitter.width = this.width - 50;
       emitter.height = this.height - 50;
-      emitter.makeParticles('explosion', 3);
+      emitter.makeParticles('explosion', [0, 1, 2]);
       emitter.minParticleSpeed.set(-100, -300);
       emitter.maxParticleSpeed.set(100, -100);
       emitter.gravity = 300;
@@ -902,6 +902,11 @@ Play.prototype = {
     //this.tank.body.setCollisionGroup(this.entityCG);
     this.game.add.existing(this.tank);
 
+    // Create the crosshair
+    this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
+    this.game.add.existing(this.crosshair);
+    this.tank.crosshair = this.crosshair;
+
     // Create/add a enemy
 
     // this.enemy = new Enemy(this.game, 600, 300);
@@ -929,11 +934,6 @@ Play.prototype = {
     this.castle = new Castle(this.game, 2700, 330);
     this.game.add.existing(this.castle);
 
-    // Create the crosshair
-    this.crosshair = new Crosshair(this.game, this.game.width/2, this.game.height/2);
-    this.game.add.existing(this.crosshair);
-    this.tank.crosshair = this.crosshair;
-
     // Camera
     this.game.camera.follow(this.tank, Phaser.Camera.FOLLOW_PLATFORMER);
 
@@ -944,14 +944,14 @@ Play.prototype = {
     this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
   },
   update: function() {
-    if(this.tank.health <= 0) {
+    if(this.tank.health <= 0 || this.tank.position.y > 1000) {
       this.end_timer = this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
         this.game.state.start('next_level', true, false, 1, 1, false);
       }, this);
     }
 
     if(this.castle.destroyed) {
-      //if(this.end_timer != null) this.end_timer.destroy();
+      if(this.end_timer != null) this.end_timer.destroy();
 
       this.game.time.events.add(Phaser.Timer.SECOND * 2, function () {
         this.game.state.start('next_level', true, false, 1, 2, true);
