@@ -11,13 +11,9 @@
 
 ## Deploying to GitHub Pages
 
-First make sure you have gh-pages locally.
+First make sure the game is built. Normally it will be, but if it's not:
 
-    $ git checkout gh-pages
-    $ git checkout master
-
-Then deploy.
-
+    $ grunt build
     $ grunt gh-pages
 
 ## Sounds Used
