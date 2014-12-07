@@ -174,10 +174,6 @@ Tank.prototype.checkCollision = function(body, shapeA, shapeB, contactEquations)
     else if(body.sprite.name === 'ground') {
       this.onGround = true;
     }
-
-    if(body.sprite.name === 'enemy') {
-      console.log('BAM!');
-    }
     else if(body.sprite.name == "enemy") {
       console.log('BAM!')
     }
@@ -228,7 +224,7 @@ Tank.prototype.damageTaken = function() {
       var emitter = this.game.add.emitter(this.x, this.y, 400);
       emitter.width = this.width - 50;
       emitter.height = this.height - 50;
-      emitter.makeParticles('explosion');
+      emitter.makeParticles('explosion', 3);
       emitter.minParticleSpeed.set(-100, -300);
       emitter.maxParticleSpeed.set(100, -100);
       emitter.gravity = 300;

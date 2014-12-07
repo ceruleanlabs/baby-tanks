@@ -54,7 +54,7 @@ MovingEnemy.prototype.decreaseHealth = function(amount, impactVelocity) {
     var emitter = this.game.add.emitter(this.x, this.y, 400);
     emitter.width = this.width - 50;
     emitter.height = this.height - 50;
-    emitter.makeParticles('explosion');
+    emitter.makeParticles('explosion', 3);
     emitter.minParticleSpeed.set(0, 0);
     emitter.maxParticleSpeed.set(10 * impactVelocity.x * -1, 1 * impactVelocity.y);
     emitter.gravity = 300;

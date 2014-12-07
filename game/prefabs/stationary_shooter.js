@@ -3,13 +3,13 @@ var EnemyBullet = require('../prefabs/enemy_bullet');
 
 var StationaryShooter = function(game, x, y, health, reloadSpeed, detectDistance, frame) {
   // The super call to Phaser.Sprite
-  Phaser.Sprite.call(this, game, x, y, 'enemy', frame);
+  Phaser.Sprite.call(this, game, x, y, 'big_evil', 2);
   this.anchor.setTo(0.5, 0.5);
 
   // enable gravity
   this.game.physics.p2.enableBody(this);
   this.body.mass = 3;
-  this.health = health || 10;
+  this.health = health || 20;
 
   // Magnitude of hits required to damage this entity
   this.collissionMagnitude = 30;
@@ -58,6 +58,7 @@ StationaryShooter.prototype.tryShooting = function() {
 }
 
 StationaryShooter.prototype.decreaseHealth = function(amount, impactVelocity) {
+  console.log(this.health - amount);
   this.health -= amount;
 
   // Create the death particles
