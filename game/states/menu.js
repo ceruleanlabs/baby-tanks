@@ -24,7 +24,7 @@ Menu.prototype = {
   },
   update: function() {
     if(this.game.input.activePointer.justPressed()) {
-      this.game.state.start('next_level',true, false, 1,1,true);
+      this.game.state.start('next_level',true, false, 1,2,true);
     }
   }
 };
