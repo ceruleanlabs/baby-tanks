@@ -3,7 +3,7 @@
 var Castle = function(game, x, y, frame) {
   // The super call to Phaser.Sprite
   Phaser.Sprite.call(this, game, x, y, 'castle', 0);
-  this.name = "castle";
+  this.name = 'castle';
   this.health = 2;
 
   // set the sprite's anchor to the center
@@ -28,7 +28,7 @@ Castle.prototype.checkCollision = function(body, shapeA, shapeB, contactEquation
   if(body) {
     if(body.sprite.name === 'bullet') {
       if((new Phaser.Point(body.velocity.x, body.velocity.y)).getMagnitude() > this.collissionMagnitude) {
-        if(this.frame == 0) {
+        if(this.frame === 0) {
           this.damage();
         } else {
           this.demolish();
@@ -44,7 +44,7 @@ Castle.prototype.checkCollision = function(body, shapeA, shapeB, contactEquation
 Castle.prototype.damage = function() {
   this.frame = 1;
   this.blowupStage1();
-}
+};
 
 Castle.prototype.demolish = function() {
   this.blowupStage1();
@@ -64,7 +64,7 @@ Castle.prototype.demolish = function() {
 
   this.game.add.tween(emitter).to( { alpha: 0 }, 4000, Phaser.Easing.Back.InOut, true, 0, Number.MAX_VALUE, true);
   emitter.start(true, 4000, null, 50);
-}
+};
 
 Castle.prototype.blowupStage1 = function() {
   var emitter = this.game.add.emitter(this.x, this.y, 400);
@@ -79,6 +79,6 @@ Castle.prototype.blowupStage1 = function() {
   emitter.maxParticleScale = 1;
 
   emitter.start(true, 2000, null, 50);
-}
+};
 
 module.exports = Castle;
