@@ -11,7 +11,7 @@
     "grunt-contrib-copy": "*",
     "grunt-contrib-watch": "~0.4.3",
     "grunt-gh-pages": "^0.9.1",
-    "grunt-html-build": "~0.3.2",
+    "grunt-html-build": "~0.7.1",
     "grunt-open": "~0.2.0",
     "matchdep": "~0.1.2",
     "moment": "~2.0.0",
